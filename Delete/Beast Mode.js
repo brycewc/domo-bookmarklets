@@ -1,4 +1,7 @@
 javascript: (() => {
+	if (!window.location.hostname.includes('domo.com')) {
+		throw new Error('This bookmarklet only works on *.domo.com domains.');
+	}
 	const url = window.location.href;
 	if (url.includes('beastmode')) {
 		const id = url.substring(url.lastIndexOf('id=') + 3);

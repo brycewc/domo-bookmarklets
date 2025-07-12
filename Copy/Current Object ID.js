@@ -1,7 +1,11 @@
 javascript: (() => {
+	if (!window.location.hostname.includes('domo.com')) {
+		throw new Error('This bookmarklet only works on *.domo.com domains.');
+	}
+	let objectType;
 	let text;
 	const url = window.location.href;
-	var parts;
+	let parts;
 	switch (true) {
 		case url.includes('alerts'):
 			objectType = 'ALERT';
