@@ -15,6 +15,11 @@ javascript: (() => {
 			objectType = 'CARD';
 			text = url.substring(url.lastIndexOf('/') + 1);
 			break;
+		case url.includes('pages'):
+			objectType = 'PAGE';
+			parts = url.split('/');
+			text = parts[parts.indexOf('pages') + 1];
+			break;
 		case url.includes('page'):
 			objectType = 'PAGE';
 			parts = url.split('/');
@@ -139,7 +144,8 @@ javascript: (() => {
 	let element = document.createElement('div');
 	element.setAttribute(
 		'style',
-		'position:absolute;top:0;left:0;background-color:#d4edda;color:#155724;z-index:1000;padding:10px;border:1px solid #c3e6cb;border-radius:5px;font-family:sans-serif;font-size:16px;box-shadow:0 0 10px rgba(0,0,0,0.1);'
+		// Centered horizontally at the top of the screen
+		'position:fixed;top:0px;left:50%;transform:translateX(-50%);background-color:#d4edda;color:#155724;z-index:1000;padding:10px;border:1px solid #c3e6cb;border-radius:5px;font-family:sans-serif;font-size:16px;box-shadow:0 0 10px rgba(0,0,0,0.1);'
 	);
 	element.innerHTML = `Copied ${objectType} ID: ${text}<div id="countdown" style="position:absolute;bottom:0;left:0;height:5px;background-color:#155724;width:100%;"></div>`;
 
