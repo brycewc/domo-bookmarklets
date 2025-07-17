@@ -134,6 +134,8 @@ javascript: (() => {
 			throw new Error('Object type not recognized.');
 	}
 
+	navigator.clipboard.writeText(text);
+
 	let element = document.createElement('div');
 	element.setAttribute(
 		'style',
@@ -153,5 +155,4 @@ javascript: (() => {
 			element.parentNode.removeChild(element);
 		}
 	}, 30); // Adjust the interval time to match the total duration
-	navigator.clipboard.writeText(text);
 })();
