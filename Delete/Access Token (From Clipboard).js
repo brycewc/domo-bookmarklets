@@ -34,9 +34,12 @@ javascript: (() => {
 						);
 					}
 				})
-				.catch((error) =>
-					alert(`Error revoking Access Token ${text}.\nError: ${error.message}`)
-				);
+				.catch((error) => {
+					alert(
+						`Error revoking Access Token ${text}.\nError: ${error.message}`
+					);
+					console.error(error);
+				});
 		}
 	});
 })();

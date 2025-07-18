@@ -57,33 +57,36 @@ javascript: (() => {
 												);
 											}
 										})
-										.catch((error) =>
+										.catch((error) => {
 											alert(
 												`Failed to delete Page ${pageId}. All ${page.cards.length} Cards were deleted successfully.\nError: ${error.message}`
-											)
-										);
+											);
+											console.error(error);
+										});
 								} else {
 									alert(
 										`Failed to delete Cards for Page ${pageId}. Page will not be deleted.\nHTTP status: ${response.status}`
 									);
 								}
 							})
-							.catch((error) =>
+							.catch((error) => {
 								alert(
 									`Failed to delete Cards for Page ${pageId}. Page will not be deleted.\nError: ${error.message}`
-								)
-							);
+								);
+								console.error(error);
+							});
 					} else {
 						alert(
 							`Failed to fetch Cards for Page ${pageId}. Page and Cards will not be deleted.\nHTTP status: ${response.status}`
 						);
 					}
 				})
-				.catch((error) =>
+				.catch((error) => {
 					alert(
 						`Failed to fetch Cards for Page ${pageId}. Page and Cards will not be deleted.\nError: ${error.message}`
-					)
-				);
+					);
+					console.error(error);
+				});
 		}
 	} else {
 		alert(

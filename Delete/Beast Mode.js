@@ -39,9 +39,10 @@ javascript: (() => {
 						);
 					}
 				})
-				.catch((error) =>
-					alert(`Error deleting Beast Mode ${id}.\nError: ${error.message}`)
-				);
+				.catch((error) => {
+					alert(`Error deleting Beast Mode ${id}.\nError: ${error.message}`);
+					console.error(error);
+				});
 		}
 	} else {
 		alert(

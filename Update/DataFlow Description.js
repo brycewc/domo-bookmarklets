@@ -18,9 +18,12 @@ javascript: (() => {
 					const dataflow = await response.json();
 
 					// Display a prompt with the prefilled value
-					const updatedDataflowName = prompt('Updated Name:', dataflow.name);
+					const updatedDataflowDescription = prompt(
+						'Updated Desciption:',
+						dataflow?.description || ''
+					);
 
-					if (updatedDataflowName) {
+					if (updatedDataflowDescription) {
 						fetch(
 							`https://domo.domo.com/api/dataprocessing/v1/dataflows/${id}/patch`,
 							{
@@ -29,7 +32,7 @@ javascript: (() => {
 									'Content-Type': 'application/json'
 								},
 								body: JSON.stringify({
-									name: updatedDataflowName
+									name: updatedDataflowDescription
 								})
 							}
 						)

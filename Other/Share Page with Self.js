@@ -62,9 +62,10 @@ javascript: (async () => {
 					alert(`Failed to share Page ${id}.\nHTTP status: ${response.status}`);
 				}
 			})
-			.catch((error) =>
-				alert(`Failed to share Page ${id}.\nError: ${error.message}`)
-			);
+			.catch((error) => {
+				alert(`Failed to share Page ${id}.\nError: ${error.message}`);
+				console.error(error);
+			});
 	} else {
 		alert(
 			'This bookmarklet can only be used on Page URLs.\nPlease navigate to a valid Page URL and try again.'
