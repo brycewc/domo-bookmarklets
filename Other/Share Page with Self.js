@@ -31,7 +31,7 @@ javascript: (async () => {
 		}
 		const parts = url.split('/');
 		const pageId = parts[parts.indexOf('page') + 1];
-		await fetch(
+		fetch(
 			`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,
 			{
 				method: 'POST',
