@@ -3,7 +3,7 @@ javascript: (async () => {
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('alerts')) {
+	if (url.includes('workflows')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -21,17 +21,18 @@ javascript: (async () => {
 			});
 		}
 		if (userId) {
-			let alertId = url.substring(url.lastIndexOf('/') + 1);
+			let parts = url.split('/');
+			let workflowId = parts[parts.indexOf('models') + 1];
 
 			fetch(
-				`https://${window.location.hostname}/api/social/v4/alerts/${alertId}`,
+				`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`,
 				{
-					method: 'PATCH',
+					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						id: alertId,
+						id: workflowId,
 						owner: userId
 					})
 				}
@@ -41,12 +42,14 @@ javascript: (async () => {
 						window.location.reload();
 					} else {
 						alert(
-							`Failed to update Alert ${alertId}.\nHTTP status: ${res.status}`
+							`Failed to update Workflow ${workflowId}.\nHTTP status: ${res.status}`
 						);
 					}
 				})
 				.catch((error) => {
-					alert(`Failed to update Alert ${alertId}.\nError: ${error.message}`);
+					alert(
+						`Failed to update Workflow ${workflowId}.\nError: ${error.message}`
+					);
 					console.error(error);
 				});
 		} else {
@@ -54,7 +57,7 @@ javascript: (async () => {
 		}
 	} else {
 		alert(
-			'This bookmarklet can only be used on Alert URLs.\nPlease navigate to a valid Alert URL and try again.'
+			'This bookmarklet can only be used on Workflow URLs.\nPlease navigate to a valid Workflow URL and try again.'
 		);
 	}
 })();

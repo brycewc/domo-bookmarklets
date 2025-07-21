@@ -7,9 +7,12 @@ javascript: (() => {
 	if (url.includes('page')) {
 		const parts = url.split('/');
 		const pageId = parts[parts.indexOf('page') + 1];
-		const response = fetch(`/api/content/v3/stacks/${pageId}/cards`, {
-			method: 'GET'
-		});
+		const response = fetch(
+			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards`,
+			{
+				method: 'GET'
+			}
+		);
 		if (
 			confirm(
 				`Are you sure you want to delete Page ${pageId} and all its cards?`
@@ -21,9 +24,12 @@ javascript: (() => {
 						const page = await res.json();
 						const cardIds = page.cards.map((card) => card.id).join(',');
 
-						fetch(`/api/content/v1/cards/bulk?cardIds=${cardIds}`, {
-							method: 'DELETE'
-						})
+						fetch(
+							`https://${window.location.hostname}/api/content/v1/cards/bulk?cardIds=${cardIds}`,
+							{
+								method: 'DELETE'
+							}
+						)
 							.then((response) => {
 								if (response.ok) {
 									fetch(`/api/content/v1/pages/${pageId}`, {

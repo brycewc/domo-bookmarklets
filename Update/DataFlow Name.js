@@ -22,7 +22,7 @@ javascript: (() => {
 
 					if (updatedDataflowName) {
 						fetch(
-							`https://domo.domo.com/api/dataprocessing/v1/dataflows/${id}/patch`,
+							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${id}/patch`,
 							{
 								method: 'PUT',
 								headers: {
