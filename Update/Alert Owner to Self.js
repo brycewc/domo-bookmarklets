@@ -3,7 +3,7 @@ javascript: (async () => {
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('page')) {
+	if (url.includes('alerts')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -21,43 +21,29 @@ javascript: (async () => {
 			});
 		}
 		if (userId) {
-			const parts = url.split('/');
-			const pageId = parts[parts.indexOf('page') + 1];
-			fetch(
-				`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						resources: [
-							{
-								type: 'page',
-								id: pageId
-							}
-						],
-						recipients: [
-							{
-								type: 'user',
-								id: userId
-							}
-						],
-						message: 'Page shared with you via bookmarklet.'
-					})
-				}
-			)
-				.then((response) => {
-					if (response.ok) {
+			let alertId = url.substring(url.lastIndexOf('/') + 1);
+
+			fetch(`https://domo.domo.com/api/social/v4/alerts/${alertId}`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: alertId,
+					owner: userId
+				})
+			})
+				.then((res) => {
+					if (res.ok) {
 						window.location.reload();
 					} else {
 						alert(
-							`Failed to share Page ${pageId}.\nHTTP status: ${response.status}`
+							`Failed to update Alert ${alertId}.\nHTTP status: ${res.status}`
 						);
 					}
 				})
 				.catch((error) => {
-					alert(`Failed to share Page ${pageId}.\nError: ${error.message}`);
+					alert(`Failed to update Alert ${alertId}.\nError: ${error.message}`);
 					console.error(error);
 				});
 		} else {
@@ -65,7 +51,7 @@ javascript: (async () => {
 		}
 	} else {
 		alert(
-			'This bookmarklet can only be used on Page URLs.\nPlease navigate to a valid Page URL and try again.'
+			'This bookmarklet can only be used on Alert URLs.\nPlease navigate to a valid Alert URL and try again.'
 		);
 	}
 })();
