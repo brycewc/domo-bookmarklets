@@ -4,11 +4,11 @@ javascript: (() => {
 	}
 	const url = window.location.href;
 	if (url.includes('dataflows')) {
-		let parts = url.split('/');
-		let id = parts[parts.indexOf('dataflows') + 1];
+		const parts = url.split(/[/?=&]/);
+		const dataflowId = parts[parts.indexOf('dataflows') + 1];
 
 		fetch(
-			`https://${window.location.hostname}/api/dataprocessing/v2/dataflows/${id}`,
+			`https://${window.location.hostname}/api/dataprocessing/v2/dataflows/${dataflowId}`,
 			{
 				method: 'GET'
 			}
@@ -25,7 +25,7 @@ javascript: (() => {
 
 					if (updatedDataflowDescription) {
 						fetch(
-							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${id}/patch`,
+							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${dataflowId}/patch`,
 							{
 								method: 'PUT',
 								headers: {
@@ -41,25 +41,27 @@ javascript: (() => {
 									window.location.reload();
 								} else {
 									alert(
-										`Failed to update DataFlow ${id}.\nHTTP status: ${res.status}`
+										`Failed to update DataFlow ${dataflowId}.\nHTTP status: ${res.status}`
 									);
 								}
 							})
 							.catch((error) => {
 								alert(
-									`Failed to update DataFlow ${id}.\nError: ${error.message}`
+									`Failed to update DataFlow ${dataflowId}.\nError: ${error.message}`
 								);
 								console.error(error);
 							});
 					}
 				} else {
 					alert(
-						`Failed to fetch DataFlow ${id}.\nHTTP status: ${response.status}`
+						`Failed to fetch DataFlow ${dataflowId}.\nHTTP status: ${response.status}`
 					);
 				}
 			})
 			.catch((error) => {
-				alert(`Failed to fetch DataFlow ${id}.\nError: ${error.message}`);
+				alert(
+					`Failed to fetch DataFlow ${dataflowId}.\nError: ${error.message}`
+				);
 				console.error(error);
 			});
 	} else {

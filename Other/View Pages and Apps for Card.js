@@ -4,7 +4,8 @@ javascript: (() => {
 	}
 	const url = window.location.href;
 	if (url.includes('kpis')) {
-		let cardId = url.substring(url.lastIndexOf('/') + 1);
+		const parts = url.split(/[/?=&]/);
+		const cardId = parts[parts.indexOf('details') + 1];
 
 		fetch(
 			`https://${window.location.hostname}/api/content/v1/cards?urns=${cardId}&parts=adminAllPages`,

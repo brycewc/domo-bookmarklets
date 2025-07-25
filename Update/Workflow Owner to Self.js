@@ -21,8 +21,8 @@ javascript: (async () => {
 			});
 		}
 		if (userId) {
-			let parts = url.split('/');
-			let workflowId = parts[parts.indexOf('models') + 1];
+			const parts = url.split(/[/?=&]/);
+			const workflowId = parts[parts.indexOf('models') + 1];
 
 			fetch(
 				`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`,

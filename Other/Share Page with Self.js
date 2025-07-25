@@ -21,7 +21,7 @@ javascript: (async () => {
 			});
 		}
 		if (userId) {
-			const parts = url.split('/');
+			const parts = url.split(/[/?=&]/);
 			const pageId = parts[parts.indexOf('page') + 1];
 			fetch(
 				`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,

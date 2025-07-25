@@ -5,7 +5,7 @@ javascript: (() => {
 	const url = window.location.href;
 
 	if (url.includes('page')) {
-		const parts = url.split('/');
+		const parts = url.split(/[/?=&]/);
 		const pageId = parts[parts.indexOf('page') + 1];
 		const response = fetch(
 			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards`,

@@ -21,7 +21,8 @@ javascript: (async () => {
 			});
 		}
 		if (userId) {
-			let alertId = url.substring(url.lastIndexOf('/') + 1);
+			const parts = url.split(/[/?=&]/);
+			const alertId = parts[parts.indexOf('alerts') + 1];
 
 			fetch(
 				`https://${window.location.hostname}/api/social/v4/alerts/${alertId}`,
