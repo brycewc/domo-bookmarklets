@@ -33,7 +33,7 @@ javascript: (async () => {
 					},
 					body: JSON.stringify({
 						id: workflowId,
-						owner: userId
+						owner: userId.toString()
 					})
 				}
 			)
