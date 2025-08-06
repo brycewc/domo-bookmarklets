@@ -1,19 +1,28 @@
 # Bookmarklets for MajorDomos
 
-This repository is a collection of helpful [bookmarklets](https://en.wikipedia.org/wiki/Bookmarklet) for Domo power users and system admins (also called [MajorDomos](https://www.domo.com/learn/majordomo)). These bookmarklets are scripts that run in one click from your browser favorites bar. Easy access and context of the current browser window makes these bookmarklets extremely valuable for accomplishing common MajorDomo tasks quickly and efficiently. Each bookmarklet is designed to dynamically adapt to the Domo instance you are currently viewing, ensuring easy setup and seamless use between various Domo instances. Authentication isn't needed as they use your already authenticated browser session.
+This repository is a collection of helpful [bookmarklets](https://en.wikipedia.org/wiki/Bookmarklet) for Domo power users and system admins (also called [MajorDomos](https://www.domo.com/learn/majordomo)). Bookmarklets (also called favlets) are scripts that run in one click from your browser favorites bar. Easy access and context of the current browser window makes these bookmarklets extremely valuable for accomplishing common MajorDomo tasks quickly and efficiently. Each bookmarklet is designed to dynamically adapt to the Domo instance you are currently viewing, ensuring easy setup and seamless use between various Domo instances. Authentication isn't needed as they use your already authenticated browser session.
+
+## Highlighted Bookmarklets
+
+- [Copy > Current Object ID](<Copy/Current Object ID.js>)
+
+- [Update > DataFlow Name](<Update/DataFlow Name.js>) (_without creating a new version_)
+- [Other > View Pages and Apps for Card](<Other/View Pages and Apps for Card.js>)
+- [Delete > Beast Mode](<Delete/Beast Mode.js>)
 
 ## Types of Bookmarklets
 
-This repository is separated into 4 different folders, each holding a different type of bookmarklet. The different types are:
+This repository is separated into 5 different folders, each holding a different type of bookmarklet. The different types are:
 
-- **Copy** - Copy something to your clipboard
-- **Delete** - Delete something
-- **Navigate** to Copied - Navigate to an object based on an ID already copied to your clipboard
-- **Other** - Other helpful scripts that don't fit into the other categories
+- **Copy** - Copy something to your clipboard e.g., ID of the object currently in view.
+- **Delete** - Delete an object
+- **Navigate to Copied** - Navigate to an object based on an ID already copied to your clipboard.
+- **Other** - Other helpful scripts that don't fit into the other categories e.g., Share Page with Self, View Pages and Apps for Card, etc.
+- **Update** - Update an object e.g., DataFlow Name, Alert Owner to Self, etc.
 
 ## Syncing Bookmarklets to Your Browser Favorites
 
-You can easily sync all the bookmarklets in this repository to your browser favorites bar (and convert them from JavaScript to bookmarklet code) using my [Bookmarklet Sync from GitHub browser extension](https://github.com/brycewc/bookmarklet-sync-from-github). That repository contains instructions to set up the browser extension, which is manually installing it in developer mode until I publish it as an extension on the Chrome and Edge extension stores. After installation, enter setup by clicking the extension, then enter **brycewc** as the _GitHub Organization_ and **domo-bookmarklets** as the _Repository Name_. To rename the folder (default is _brycewc/domo-bookmarklets_), add the desired folder name in the _Bookmark Folder Name (optional)_ field. Syncing of bookmarklets requires manually clicking on the extension and clicking _Sync Bookmarks_. If you want to know when updates are made or new bookmarklets are added, you can watch this repository.
+You can easily sync all the bookmarklets in this repository to your browser favorites bar (and convert them from JavaScript to bookmarklet code) using my [Bookmarklet Sync from GitHub browser extension](https://github.com/brycewc/bookmarklet-sync-from-github). That repository contains instructions to set up the browser extension, which is now available in the [Chrome Web Store - Bookmarklet Sync from GitHub](https://chromewebstore.google.com/detail/bookmarklet-sync-from-git/hfckbalabggfedpkmlhmnelkjnnfmgjj?hl=en-US). After installation, enter setup by clicking the extension, then enter **brycewc** as the _GitHub Organization or User\*_ and **domo-bookmarklets** as the _Repository Name\*_. To rename the folder (default is the repository name, in this case _brycewc/domo-bookmarklets_), add the desired folder name in the _Bookmark Folder Name (optional)_ field. Syncing of bookmarklets requires manually clicking on the extension and clicking _Sync Bookmarks_. If you want to know when updates are made or new bookmarklets are added, you can watch this repository. Adding a GitHub personal access token in the _GitHub Token_ field is required to access a private repositories and optional for public repositories, but it does increase your API call limit.
 
 ## Contributing
 
