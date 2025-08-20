@@ -5,10 +5,11 @@ This repository is a collection of helpful [bookmarklets](https://en.wikipedia.o
 ## Highlighted Bookmarklets
 
 - [Copy > Current Object ID](<Copy/Current Object ID.js>)
-
-- [Update > DataFlow Name](<Update/DataFlow Name.js>) (_without creating a new version_)
-- [Other > View Pages and Apps for Card](<Other/View Pages and Apps for Card.js>)
 - [Delete > Beast Mode](<Delete/Beast Mode.js>)
+- [Other > Share Page with Self](<Other/Share Page with Self.js>)
+- [Other > View Pages and Apps for Card](<Other/View Pages and Apps for Card.js>)
+- [Update > DataFlow Name](<Update/DataFlow Name.js>) (_without creating a new version_)
+- [Update > DataSet Schema Column Order](<Update/DataSet Schema Column Order.js>)
 
 ## Types of Bookmarklets
 
