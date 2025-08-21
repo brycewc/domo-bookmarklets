@@ -24,20 +24,20 @@ javascript: (() => {
 						) {
 							const adminPages =
 								card.adminAllPages && card.adminAllPages.length
-									? `<ul style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;">${card.adminAllPages
+									? `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;list-style:disc;">${card.adminAllPages
 											.map(
 												(page) =>
-													`<li style="margin-bottom:0.25em;"><a href="https://${window.location.hostname}/page/${page.pageId}" target="_blank">${page.title}</a></li>`
+													`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a></li>`
 											)
 											.join('')}</ul>`
 									: `<div style="color:#888;font-style:italic;margin-bottom:1em;">Card is not used on any Pages</div>`;
 
 							const appPages =
 								card.adminAllAppPages && card.adminAllAppPages.length
-									? `<ul style="margin-top:0.5em;margin-bottom:0;padding-left:1.5em;">${card.adminAllAppPages
+									? `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:0;padding-left:1.5em;list-style:disc;">${card.adminAllAppPages
 											.map(
 												(page) =>
-													`<li style="margin-bottom:0.25em;"><a href="https://${window.location.hostname}/app-studio/${page.appId}/pages/${page.appPageId}" target="_blank">${page.appTitle} &gt; ${page.appPageTitle}</a></li>`
+													`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/app-studio/${page.appId}/pages/${page.appPageId}" target="_blank" style="text-decoration:underline;">${page.appTitle} &gt; ${page.appPageTitle}</a></li>`
 											)
 											.join('')}</ul>`
 									: `<div style="color:#888;font-style:italic;">Card is not used on any App Pages</div>`;
@@ -67,7 +67,7 @@ javascript: (() => {
 							const modalContent = document.createElement('div');
 							modalContent.setAttribute(
 								'style',
-								'background:white;padding:24px 32px 24px 32px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.2);min-width:320px;max-width:90vw;position:relative;'
+								'background:white;padding:24px 32px 24px 32px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.2);min-width:320px;max-width:90vw;position:relative;overflow:auto;max-height:90vh;'
 							);
 
 							// Dismiss button
@@ -77,12 +77,33 @@ javascript: (() => {
 								'style',
 								'position:absolute;top:16px;right:16px;font-size:28px;background:none;border:none;cursor:pointer;color:#333;line-height:1;width:36px;height:36px;'
 							);
-							closeBtn.onclick = () => modal.remove();
+
+							// Placeholder for URL watcher interval id (must exist before cleanup definition)
+							let urlWatcher;
+							// Cleanup function to remove modal & listeners
+							const cleanup = () => {
+								if (modal && modal.parentNode) modal.remove();
+								window.removeEventListener('popstate', cleanup);
+								window.removeEventListener('hashchange', cleanup);
+								if (urlWatcher) clearInterval(urlWatcher);
+							};
+
+							closeBtn.onclick = cleanup;
 
 							modalContent.innerHTML = message;
 							modalContent.appendChild(closeBtn);
 							modal.appendChild(modalContent);
 							document.body.appendChild(modal);
+
+							// Watch for URL changes (SPA navigation or back/forward)
+							const initialUrl = window.location.href;
+							urlWatcher = setInterval(() => {
+								if (window.location.href !== initialUrl) {
+									cleanup();
+								}
+							}, 500);
+							window.addEventListener('popstate', cleanup);
+							window.addEventListener('hashchange', cleanup);
 						} else {
 							alert(`Card ${cardId} is not used in any pages or apps.`);
 						}
@@ -90,11 +111,13 @@ javascript: (() => {
 						alert(`Card ${cardId} not found.`);
 					}
 				} else {
-					alert(`Failed to fetch Card ${id}.\nHTTP status: ${response.status}`);
+					alert(
+						`Failed to fetch Card ${cardId}.\nHTTP status: ${response.status}`
+					);
 				}
 			})
 			.catch((error) => {
-				alert(`Failed to fetch Card ${id}.\nError: ${error.message}`);
+				alert(`Failed to fetch Card ${cardId}.\nError: ${error.message}`);
 				console.error(error);
 			});
 	} else {
