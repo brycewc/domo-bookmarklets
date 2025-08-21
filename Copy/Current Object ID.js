@@ -11,6 +11,10 @@ javascript: (() => {
 			objectType = 'ALERT';
 			id = parts[parts.indexOf('alerts') + 1];
 			break;
+		case url.includes('drillviewid='):
+			objectType = 'DRILL_VIEW';
+			id = parts[parts.indexOf('drillviewid') + 1];
+			break;
 		case url.includes('kpis'):
 			objectType = 'CARD';
 			id = parts[parts.indexOf('details') + 1];
@@ -47,6 +51,10 @@ javascript: (() => {
 			objectType = 'GROUP';
 			id = parts[parts.indexOf('groups') + 1];
 			break;
+		case url.includes('admin/roles') && !url.includes('tab=roles'):
+			objectType = 'ROLE';
+			id = parts[parts.indexOf('roles') + 1];
+			break;
 		case url.includes('workflows'):
 			objectType = 'WORKFLOW_MODEL';
 			id = parts[parts.indexOf('models') + 1];
@@ -56,7 +64,7 @@ javascript: (() => {
 			id = parts[parts.indexOf('codeengine') + 1];
 			break;
 		case url.includes('appDb'):
-			objectType = 'COLLECTION';
+			objectType = 'MAGNUM_COLLECTION';
 			id = parts[parts.indexOf('appDb') + 1];
 			break;
 		case url.includes('assetlibrary'):
@@ -91,8 +99,12 @@ javascript: (() => {
 			objectType = 'GOAL';
 			id = parts[parts.indexOf('goals') + 1];
 			break;
-		case url.includes('queues'):
-			objectType = 'QUEUE';
+		case url.includes('queues') && url.includes('&id='):
+			objectType = 'HOPPER_TASK';
+			id = parts[parts.indexOf('id') + 1];
+			break;
+		case url.includes('queueId'):
+			objectType = 'HOPPER_QUEUE';
 			id = parts[parts.indexOf('queueId') + 1];
 			break;
 		case url.includes('approval/request-details'):
