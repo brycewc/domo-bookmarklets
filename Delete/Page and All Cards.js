@@ -6,7 +6,15 @@ javascript: (() => {
 
 	if (url.includes('page')) {
 		const parts = url.split(/[/?=&]/);
-		const pageId = parts[parts.indexOf('page') + 1];
+		const pageType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
+		let appId = null;
+		if (pageType === 'DATA_APP_VIEW') {
+			appId = parts[parts.indexOf('app-studio') + 1];
+		}
+		const pageId =
+			pageType === 'PAGE'
+				? parts[parts.indexOf('page') + 1]
+				: parts[parts.indexOf('pages') + 1];
 		const response = fetch(
 			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards`,
 			{
@@ -32,7 +40,11 @@ javascript: (() => {
 						)
 							.then((response) => {
 								if (response.ok) {
-									fetch(`/api/content/v1/pages/${pageId}`, {
+									let pageDeleteUrl =
+										pageType === 'PAGE'
+											? `/api/content/v1/pages/${pageId}`
+											: `/api/content/v1/dataapps/${appId}/views/${pageId}`;
+									fetch(`https://${window.location.hostname}${pageDeleteUrl}`, {
 										method: 'DELETE'
 									})
 										.then((response) => {
@@ -56,7 +68,6 @@ javascript: (() => {
 														element.parentNode.removeChild(element);
 													}
 												}, 30); // Adjust the interval time to match the total duration
-												window.location.reload();
 											} else {
 												alert(
 													`Failed to delete Page ${pageId}. All ${page.cards.length} Cards were deleted successfully.\nHTTP status: ${response.status}`

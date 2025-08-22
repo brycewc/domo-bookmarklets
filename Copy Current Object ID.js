@@ -15,14 +15,61 @@ javascript: (() => {
 			objectType = 'DRILL_VIEW';
 			id = parts[parts.indexOf('drillviewid') + 1];
 			break;
-		case url.includes('kpis'):
+		case url.includes('kpis'): {
+			// Prefer Drill Path ID from breadcrumb when on a drill path
+			try {
+				const bcSpan = document.querySelector(
+					'ul.breadcrumb li:last-child span[id]'
+				);
+				const bcId = bcSpan && (bcSpan.id || bcSpan.getAttribute('id'));
+				if (bcId && bcId.indexOf(':') > -1) {
+					// Format: dr:<drill_path_id>:<card_id>
+					const partsColon = bcId.split(':');
+					const dpIdRaw = partsColon[1];
+					const dpId = dpIdRaw && (dpIdRaw.match(/\d+/) || [])[0];
+					if (dpId) {
+						objectType = 'DRILL_VIEW';
+						id = dpId;
+						break;
+					}
+				}
+			} catch (e) {
+				// ignore and fall back
+			}
+			// Fallback: Card ID from URL
 			objectType = 'CARD';
 			id = parts[parts.indexOf('details') + 1];
 			break;
-		case url.includes('pages'):
-			objectType = 'DATA_APP_VIEW';
-			id = parts[parts.indexOf('pages') + 1];
+		}
+		// App Studio: Prefer Card ID from modal when open; otherwise use Page ID from URL
+		case url.includes('page'): {
+			const detailsEl = document.querySelector('cd-details-title');
+			let kpiId;
+			try {
+				if (
+					detailsEl &&
+					window.angular &&
+					typeof window.angular.element === 'function'
+				) {
+					const ngScope = window.angular.element(detailsEl).scope();
+					kpiId = ngScope && ngScope.$ctrl && ngScope.$ctrl.kpiId;
+				}
+			} catch (e) {
+				// Ignore and fallback to Page ID
+			}
+
+			if (kpiId) {
+				objectType = 'CARD';
+				id = kpiId;
+			} else {
+				objectType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
+				id =
+					objectType === 'DATA_APP_VIEW'
+						? parts[parts.indexOf('pages') + 1]
+						: parts[parts.indexOf('page') + 1];
+			}
 			break;
+		}
 		case url.includes('page'):
 			objectType = 'PAGE';
 			id = parts[parts.indexOf('page') + 1];
@@ -136,7 +183,7 @@ javascript: (() => {
 	element.setAttribute(
 		'style',
 		// Centered horizontally at the top of the screen
-		'position:fixed;top:0px;left:50%;transform:translateX(-50%);background-color:#d4edda;color:#155724;z-index:1000;padding:10px;border:1px solid #c3e6cb;border-radius:5px;font-family:sans-serif;font-size:16px;box-shadow:0 0 10px rgba(0,0,0,0.1);'
+		'position:fixed;top:0px;left:50%;transform:translateX(-50%);background-color:#d4edda;color:#155724;z-index:2147483647;padding:10px;border:1px solid #c3e6cb;border-radius:5px;font-family:sans-serif;font-size:16px;box-shadow:0 0 10px rgba(0,0,0,0.1);pointer-events:none;'
 	);
 	element.innerHTML = `Copied ${objectType} ID: ${id}<div id="countdown" style="position:absolute;bottom:0;left:0;height:5px;background-color:#155724;width:100%;"></div>`;
 
