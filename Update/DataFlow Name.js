@@ -20,6 +20,15 @@ javascript: (() => {
 					// Display a prompt with the prefilled value
 					const updatedDataflowName = prompt('Updated Name:', dataflow.name);
 
+					if (updatedDataflowName === '') {
+						alert('DataFlow name cannot be empty.');
+						return;
+					}
+
+					if (updatedDataflowName === null) {
+						return; // User pressed Cancel
+					}
+
 					if (updatedDataflowName) {
 						fetch(
 							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${dataflowId}/patch`,

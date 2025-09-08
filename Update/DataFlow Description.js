@@ -23,6 +23,15 @@ javascript: (() => {
 						dataflow?.description || ''
 					);
 
+					if (updatedDataflowDescription === '') {
+						alert('DataFlow description cannot be empty.');
+						return;
+					}
+
+					if (updatedDataflowDescription === null) {
+						return; // User pressed Cancel
+					}
+
 					if (updatedDataflowDescription) {
 						fetch(
 							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${dataflowId}/patch`,
