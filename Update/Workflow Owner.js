@@ -16,7 +16,18 @@ javascript: (async () => {
 			});
 		}
 
-		const newOwnerId = prompt(
+		// Start fetching workflow asynchronously
+		let workflowPromise = fetch(
+			`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`
+		)
+			.then((res) => res.json())
+			.catch((error) => {
+				alert(`Failed to get Workflow ${workflowId}.\nError: ${error.message}`);
+				console.error(error);
+			});
+
+		// Prompt for new owner ID while workflow is loading
+		let newOwnerId = prompt(
 			'User ID of New Owner (Defaults to Current User ID):',
 			userId
 		);
@@ -29,20 +40,21 @@ javascript: (async () => {
 			return; // User pressed Cancel
 		}
 
-		const parts = url.split(/[/?=&]/);
-		const workflowId = parts[parts.indexOf('models') + 1];
+		// Wait for workflow to finish loading
+		let workflow = await workflowPromise;
 
-		fetch(
+		// Update owner
+		workflow.owner = newOwnerId.toString();
+
+		// Save workflow
+		await fetch(
 			`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`,
 			{
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					id: workflowId,
-					owner: userId.toString()
-				})
+				body: JSON.stringify(workflow)
 			}
 		)
 			.then((res) => {
