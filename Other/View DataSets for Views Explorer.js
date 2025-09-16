@@ -114,7 +114,7 @@ javascript: (() => {
 	<div style="font-family:sans-serif;">
 		<div style="display:flex;align-items:flex-start;justify-content:space-between;">
 			<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-				View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> contains the following DataSets:
+				View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
 			</strong>
 		</div>
 		${listHtml}

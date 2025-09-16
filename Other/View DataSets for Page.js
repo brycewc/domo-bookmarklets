@@ -104,12 +104,14 @@ javascript: (() => {
 									return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/datasources/${dsId}/details/overview" target="_blank" style="text-decoration:underline;">${dsName}</a><button class="ds-count" data-dsid="${dsId}" aria-expanded="false" title="Show cards using this DataSet" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="ds-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button>${cardsHtml}</li>`;
 								})
 								.join('')}</ul>`;
-
+							const pageUrls =
+								pageType === 'DATA_APP_VIEW'
+									? `<a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}" target="_blank">App Page ${page.page.title}</a>`
+									: `<a href="https://${window.location.hostname}/page/${pageId}" target="_blank">Page ${page.page.title}</a>`;
 							const message = `
     <div style="font-family:sans-serif;">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-                Page ${page.page.title} (ID: ${pageId}) contains the following DataSets:
+            <strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">${pageUrls} (ID: ${pageId}) contains the following DataSets:
             </strong>
         </div>
         ${datasetElements}
