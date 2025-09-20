@@ -102,9 +102,13 @@ javascript: (() => {
 			objectType = 'ROLE';
 			id = parts[parts.indexOf('roles') + 1];
 			break;
+		case url.includes('instances') && window.location.pathname.length > 60:
+			objectType = 'WORKFLOW_INSTANCE';
+			id = parts[parts.length - 1];
+			break;
 		case url.includes('workflows'):
 			objectType = 'WORKFLOW_MODEL';
-			id = parts[parts.indexOf('models') + 1];
+			id = parts[parts.indexOf('models') || parts.indexOf('instances') + 1];
 			break;
 		case url.includes('codeengine'):
 			objectType = 'CODEENGINE_PACKAGE';
