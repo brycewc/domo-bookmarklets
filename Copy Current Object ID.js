@@ -102,13 +102,13 @@ javascript: (() => {
 			objectType = 'ROLE';
 			id = parts[parts.indexOf('roles') + 1];
 			break;
-		case url.includes('instances') && window.location.pathname.length > 60:
+		case url.includes('instances') && parts.length >= 8:
 			objectType = 'WORKFLOW_INSTANCE';
 			id = parts[parts.length - 1];
 			break;
 		case url.includes('workflows'):
 			objectType = 'WORKFLOW_MODEL';
-			id = parts[parts.indexOf('models') || parts.indexOf('instances') + 1];
+			id = parts[parts.indexOf('workflows') + 2];
 			break;
 		case url.includes('codeengine'):
 			objectType = 'CODEENGINE_PACKAGE';
@@ -142,6 +142,22 @@ javascript: (() => {
 			objectType = 'PROJECT';
 			id = parts[parts.indexOf('project') + 1];
 			break;
+		case url.includes('key-results'):
+			objectType = 'KEY_RESULT';
+			id = parts[parts.indexOf('key-results') + 1];
+			break;
+		case url.includes('goals/profile/user') && url.includes('/goal/'):
+			objectType = 'GOAL';
+			id = parts[parts.indexOf('goal') + 1];
+			break;
+		case url.includes('goals/profile/user'):
+			objectType = 'USER';
+			id = parts[parts.indexOf('user') + 1];
+			break;
+		case url.includes('goals/tree'):
+			objectType = 'GOAL';
+			id = parts[parts.indexOf('tree') + 1];
+			break;
 		case url.includes('goals/profile'):
 			objectType = 'GOAL';
 			id = parts[parts.indexOf('goal') + 1];
@@ -162,6 +178,10 @@ javascript: (() => {
 			objectType = 'APPROVAL';
 			id = parts[parts.indexOf('request-details') + 1];
 			break;
+		case url.includes('approval/edit-request-form'):
+			objectType = 'TEMPLATE';
+			id = parts[parts.indexOf('edit-request-form') + 1];
+			break;
 		case url.includes('jupyter-workspaces'):
 			objectType = 'DATA_SCIENCE_NOTEBOOK';
 			id = parts[parts.indexOf('jupyter-workspaces') + 1];
@@ -176,7 +196,7 @@ javascript: (() => {
 			break;
 		default:
 			alert(
-				"This bookmarklet doesn't support this page. You can copy the ID manually from the URL or add support for this page by editing the bookmarklet code."
+				"This bookmarklet doesn't support this object type. You can copy the ID manually from the URL or add support for this object type by editing the bookmarklet code."
 			);
 			throw new Error('Object type not recognized.');
 	}
