@@ -1,25 +1,26 @@
 # Bookmarklets for MajorDomos
 
-This repository is a collection of helpful [bookmarklets](https://en.wikipedia.org/wiki/Bookmarklet) for Domo power users and system admins (also called [MajorDomos](https://www.domo.com/learn/majordomo)). Bookmarklets (also called favlets) are scripts that run in one click from your browser favorites bar. Easy access and context of the current browser window makes these bookmarklets extremely valuable for accomplishing common MajorDomo tasks quickly and efficiently. Each bookmarklet is designed to dynamically adapt to the Domo instance you are currently viewing, ensuring easy setup and seamless use between various Domo instances. Authentication isn't needed as they use your already authenticated browser session.
+This repository is a collection of helpful [bookmarklets](https://en.wikipedia.org/wiki/Bookmarklet) for Domo power users and system admins (also called [MajorDomos](https://www.domo.com/learn/majordomo)). Bookmarklets (also called favlets) are scripts that run in one click from your browser favorites bar. Easy access and context of the current browser window makes these bookmarklets extremely valuable for accomplishing common MajorDomo tasks quick and easy. Each bookmarklet is designed to dynamically adapt to the Domo instance you are currently viewing, ensuring easy setup and seamless use between various Domo instances. Authentication isn't needed as they use your already authenticated browser session.
 
 ## Highlighted Bookmarklets
 
-- [Copy > Current Object ID](<Copy/Current Object ID.js>)
-- [Delete > Beast Mode](<Delete/Beast Mode.js>)
-- [Other > Share Page with Self](<Other/Share Page with Self.js>)
-- [Other > View Pages and Apps for Card](<Other/View Pages and Apps for Card.js>)
-- [Update > DataFlow Name](<Update/DataFlow Name.js>) (_without creating a new version_)
-- [Update > DataSet Schema Column Order](<Update/DataSet Schema Column Order.js>)
+- [Activity Log Current Object](<Activity Log Current Object.js>) - View the activity log (using a card built on DomoStats data) filtered to the current object. First-time setup (per instance) is required, where you will enter the card ID, object ID column name, and object type column name. Then, that information is saved in your browser's local storage so you don't have to enter it again for that instance.
+- [Copy Current Object ID](<Copy Current Object ID.js>) - Copy the current object's ID to your clipboard.
+- [Delete > Beast Mode](<Delete/Beast Mode.js>) - In Beast Mode Manager, delete the current Beast Mode (not supported in the UI!).
+- [Other > Enable Data Repair](<Other/Enable Data Repair.js>) - Enable data repair on the current DataSet, which allows you to download, replace, or delete updates to rows in the DataSet.
+- [Other > Get All Pages for Card](<Other/Get All Pages for Card.js>) - Shows all pages/dashboards, app studio apps, and report builder reports that contain the current card.
+- [Other > Share Page with Self](<Other/Share Page with Self.js>) - As an admin, quickly share the current page with yourself without navigating to admin settings.
+- [Update > DataFlow Name](<Update/DataFlow Name.js>) - Rename the current DataFlow, _without creating a new version_.
 
 ## Types of Bookmarklets
 
-This repository is separated into 5 different folders, each holding a different type of bookmarklet. The different types are:
+This repository is separated into 4 different folders, each holding a different type of bookmarklet. The different types are:
 
-- **Copy** - Copy something to your clipboard e.g., ID of the object currently in view.
-- **Delete** - Delete an object
+- **Root** - Two quick access bookmarklets: Activity Log Current Object and Copy Current Object ID.
+- **Delete** - Delete an object or objects e.g., Beast Mode, Page and All Cards, etc.
 - **Navigate to Copied** - Navigate to an object based on an ID already copied to your clipboard.
-- **Other** - Other helpful scripts that don't fit into the other categories e.g., Share Page with Self, View Pages and Apps for Card, etc.
-- **Update** - Update an object e.g., DataFlow Name, Alert Owner to Self, etc.
+- **Other** - Other helpful scripts that don't fit into the other categories e.g., Get All Pages for Card, Share Page with Self, etc.
+- **Update** - Update an object e.g., Alert Owner, DataFlow Name, etc.
 
 ## Syncing Bookmarklets to Your Browser Favorites
 
