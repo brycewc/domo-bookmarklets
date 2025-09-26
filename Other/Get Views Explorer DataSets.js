@@ -124,7 +124,7 @@ javascript: (() => {
 					const modal = document.createElement('div');
 					modal.setAttribute(
 						'style',
-						'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:10000;display:flex;align-items:center;justify-content:center;'
+						'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:2147483647;display:flex;align-items:center;justify-content:center;'
 					);
 
 					// Modal content

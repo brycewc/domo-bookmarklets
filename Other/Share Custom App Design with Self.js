@@ -3,7 +3,7 @@ javascript: (async () => {
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('assetlibrary')) {
+	if (url.includes('assetlibrary') || url.includes('pro-code-editor')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -22,7 +22,10 @@ javascript: (async () => {
 		}
 		if (userId) {
 			const parts = url.split(/[/?=&]/);
-			const appDesignId = parts[parts.indexOf('assetlibrary') + 1];
+			const uriPart = url.includes('assetlibrary')
+				? 'assetlibrary'
+				: 'pro-code-editor';
+			const appDesignId = parts[parts.indexOf(uriPart) + 1];
 			fetch(
 				`https://${window.location.hostname}/api/apps/v1/designs/${appDesignId}/permissions/ADMIN`,
 				{

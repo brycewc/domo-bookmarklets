@@ -22,7 +22,7 @@ javascript: (() => {
 		const loadingModal = document.createElement('div');
 		loadingModal.setAttribute(
 			'style',
-			'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:10000;display:flex;align-items:center;justify-content:center;'
+			'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:2147483647;display:flex;align-items:center;justify-content:center;'
 		);
 		const loadingContent = document.createElement('div');
 		loadingContent.setAttribute(
@@ -85,7 +85,7 @@ javascript: (() => {
 		// Replace removeLoading references with the cleanup version
 		removeLoading = removeLoadingWithCleanup;
 
-		// Build the request (keeping existing parts param for pages & app pages)
+		// Build the request (adminAllPages includes pages, app studio pages, and report builder pages)
 		fetch(
 			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards?parts=adminAllPages`,
 			{
@@ -110,9 +110,10 @@ javascript: (() => {
 					return;
 				}
 
-				// Build a flat list of all pages and app pages from all cards, excluding the current page
+				// Build a flat list of all pages, app pages, and report builder pages from all cards
 				const allPages = [];
 				const allAppPages = [];
+				const allReports = [];
 
 				cards.forEach((card) => {
 					if (card.adminAllPages) {
@@ -123,6 +124,16 @@ javascript: (() => {
 					if (card.adminAllAppPages) {
 						allAppPages.push(
 							...card.adminAllAppPages.filter((p) => !(p.appPageId === pageId))
+						);
+					}
+					if (card.adminAllReportPages) {
+						allReports.push(
+							...card.adminAllReportPages.map((p) => ({
+								reportId: String(p.reportId),
+								reportPageId: String(p.reportPageId),
+								reportTitle: p.reportTitle || p.reportName || 'Report',
+								reportPageTitle: p.reportPageTitle || p.title || 'Page'
+							}))
 						);
 					}
 				});
@@ -146,9 +157,25 @@ javascript: (() => {
 				});
 				const uniqueAppPages = Array.from(appPageMap.values());
 
-				if (!uniquePages.length && !uniqueAppPages.length) {
+				// Deduplicate report pages by reportId + reportPageId
+				const reportPageMap = new Map();
+				allReports.forEach((rp) => {
+					const key = `${rp.reportId}:${rp.reportPageId}`;
+					if (!reportPageMap.has(key)) {
+						reportPageMap.set(key, rp);
+					}
+				});
+				const uniqueReportPages = Array.from(reportPageMap.values());
+
+				if (
+					!uniquePages.length &&
+					!uniqueAppPages.length &&
+					!uniqueReportPages.length
+				) {
 					removeLoading();
-					alert(`Cards on this page are not used on any other pages or apps.`);
+					alert(
+						`Cards on this page are not used on any other pages, app studio pages, or report builder pages.`
+					);
 					return;
 				}
 
@@ -178,6 +205,23 @@ javascript: (() => {
 					);
 					if (cardsOnAppPage.length) {
 						appPageToCards.set(key, cardsOnAppPage);
+					}
+				});
+
+				// Build mapping of reportKey -> cards that appear on that report builder page
+				const reportPageToCards = new Map();
+				uniqueReportPages.forEach((reportPage) => {
+					const key = `${reportPage.reportId}:${reportPage.reportPageId}`;
+					const cardsOnReportPage = cards.filter(
+						(card) =>
+							card.adminAllReportPages &&
+							card.adminAllReportPages.some(
+								(p) =>
+									String(p.reportPageId) === String(reportPage.reportPageId)
+							)
+					);
+					if (cardsOnReportPage.length) {
+						reportPageToCards.set(key, cardsOnReportPage);
 					}
 				});
 
@@ -217,7 +261,7 @@ javascript: (() => {
 								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a><button class="page-count" data-pageid="${page.pageId}" aria-expanded="false" title="Show cards on this page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="page-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="page-open-all" data-pageid="${page.pageId}" title="Open all cards on this page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
 							})
 							.join('')}</ul>`
-					: `<div style="color:#888;font-style:italic;margin-bottom:1em;">No other Pages</div>`;
+					: `<div style="color:#888;font-style:italic;margin-bottom:1em;">No other pages</div>`;
 
 				// Build HTML for app pages section
 				const appPagesHtml = uniqueAppPages.length
@@ -258,13 +302,56 @@ javascript: (() => {
 								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/app-studio/${appPage.appId}/pages/${appPage.appPageId}" target="_blank" style="text-decoration:underline;">${appPage.appTitle} &gt; ${appPage.appPageTitle}</a><button class="apppage-count" data-appkey="${key}" aria-expanded="false" title="Show cards on this app page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="apppage-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="apppage-open-all" data-appkey="${key}" title="Open all cards on this app page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
 							})
 							.join('')}</ul>`
-					: `<div style="color:#888;font-style:italic;">No other App Pages</div>`;
+					: `<div style="color:#888;font-style:italic;">No other app studio pages</div>`;
 
 				const currentPageTitle = page.page ? page.page.title : `Page ${pageId}`;
 				const currentPageUrl =
 					pageType === 'DATA_APP_VIEW'
 						? `<a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}" target="_blank">${currentPageTitle}</a>`
 						: `<a href="https://${window.location.hostname}/page/${pageId}" target="_blank">${currentPageTitle}</a>`;
+
+				// Build HTML for report builder pages section (plain text, no links)
+				const reportsHtml = uniqueReportPages.length
+					? `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:0;padding-left:1.5em;list-style:disc;">${uniqueReportPages
+							.sort((a, b) =>
+								String(a.reportTitle || '').localeCompare(
+									String(b.reportTitle || '')
+								)
+							)
+							.map((rp) => {
+								const key = `${rp.reportId}:${rp.reportPageId}`;
+								const cardsOnReport = reportPageToCards.get(key) || [];
+								const count = cardsOnReport.length;
+								const countLabel = count === 1 ? '1 card' : `${count} cards`;
+								const cardsHtml = count
+									? `<div class="reportpage-cards" style="display:none;margin-top:4px;margin-left:0.5em;"><ul style="margin:0.25em 0 0 1em;padding-left:1em;">${cardsOnReport
+											.map((card) => {
+												const cardId =
+													card.id ||
+													card.kpiId ||
+													(typeof card.urn === 'string'
+														? card.urn.split(':').pop()
+														: '');
+												const cardTitle =
+													card.title || card.name || `Card ${cardId}`;
+												return { cardId, cardTitle };
+											})
+											.sort((a, b) =>
+												String(a.cardTitle || '').localeCompare(
+													String(b.cardTitle || '')
+												)
+											)
+											.map(
+												({ cardTitle }) =>
+													`<li style="margin:0.125em 0;list-style:disc;">${cardTitle}</li>`
+											)
+											.join('')}</ul></div>`
+									: '';
+								const displayTitle = `${rp.reportTitle} &gt; ${rp.reportPageTitle}`;
+								return `<li style="margin-bottom:0.25em;list-style:disc;">${displayTitle}<button class="reportpage-count" data-reportkey="${key}" aria-expanded="false" title="Show cards on this report page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="reportpage-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button>${cardsHtml}</li>`;
+							})
+							.join('')}</ul>`
+					: `<div style="color:#888;font-style:italic;">No report builder pages</div>`;
 
 				const message = `
 		<div style="font-family:sans-serif;">
@@ -275,8 +362,10 @@ javascript: (() => {
 				</div>
 				<h4 style="margin-bottom:0.25em;">Pages</h4>
 				${pagesHtml}
-				<h4 style="margin-bottom:0.25em;margin-top:1em;">App Pages</h4>
+				<h4 style="margin-bottom:0.25em;margin-top:1em;">App Studio Pages</h4>
 				${appPagesHtml}
+				<h4 style="margin-bottom:0.25em;margin-top:1em;">Report Builder Pages</h4>
+				${reportsHtml}
 		</div>
 `;
 
@@ -284,7 +373,7 @@ javascript: (() => {
 				const modal = document.createElement('div');
 				modal.setAttribute(
 					'style',
-					'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:10000;display:flex;align-items:center;justify-content:center;'
+					'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:2147483647;display:flex;align-items:center;justify-content:center;'
 				);
 
 				const modalContent = document.createElement('div');
@@ -369,6 +458,32 @@ javascript: (() => {
 							btn.parentElement.querySelector('.apppage-open-all');
 						if (openAllBtn) {
 							openAllBtn.style.display = isHidden ? 'inline-block' : 'none';
+						}
+					});
+				});
+
+				// Wire up report page count toggles and arrow rotation
+				const reportPageButtons = modalContent.querySelectorAll(
+					'button.reportpage-count'
+				);
+				reportPageButtons.forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const list =
+							btn.parentElement &&
+							btn.parentElement.querySelector('.reportpage-cards');
+						if (!list) return;
+						const isHidden =
+							list.style.display === 'none' || list.style.display === '';
+						list.style.display = isHidden ? 'block' : 'none';
+						btn.title = isHidden
+							? 'Hide cards on this report page'
+							: 'Show cards on this report page';
+						btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+						const arrow = btn.querySelector('.reportpage-arrow');
+						if (arrow) {
+							arrow.style.transform = isHidden
+								? 'rotate(90deg)'
+								: 'rotate(0deg)';
 						}
 					});
 				});

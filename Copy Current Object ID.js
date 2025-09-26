@@ -122,6 +122,10 @@ javascript: (() => {
 			objectType = 'APP';
 			id = parts[parts.indexOf('assetlibrary') + 1];
 			break;
+		case url.includes('pro-code-editor'):
+			objectType = 'APP';
+			id = parts[parts.indexOf('pro-code-editor') + 1];
+			break;
 		case url.includes('datacenter/filesets'):
 			objectType = 'FILESET';
 			id = parts[parts.indexOf('filesets') + 1];
