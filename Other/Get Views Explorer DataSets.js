@@ -1,9 +1,10 @@
 javascript: (() => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('datasources')) {
+	if (url.includes('datasources/')) {
 		const parts = url.split(/[/?=&]/);
 		const viewId = parts[parts.indexOf('datasources') + 1];
 
@@ -192,7 +193,7 @@ javascript: (() => {
 		});
 	} else {
 		alert(
-			'This bookmarklet can only be used on Views Explorer URLs (DataSet View).'
+			'This bookmarklet can only be used on DataSet URLs.\nPlease navigate to a valid DataSet URL and try again.'
 		);
 	}
 })();

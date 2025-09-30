@@ -92,7 +92,8 @@ javascript: (() => {
 	}
 
 	if (!window.location.hostname.includes('domo.com')) {
-		throw new Error('This bookmarklet only works on *.domo.com.');
+		alert('This bookmarklet only works on *.domo.com domains.');
+		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
 	getActivityLogConfig()
@@ -107,7 +108,7 @@ javascript: (() => {
 				const url = window.location.href;
 				const parts = url.split(/[/?=&]/);
 				switch (true) {
-					case url.includes('alerts'):
+					case url.includes('alerts/'):
 						objectType = 'ALERT';
 						id = parts[parts.indexOf('alerts') + 1];
 						break;
@@ -115,7 +116,7 @@ javascript: (() => {
 						objectType = 'DRILL_VIEW';
 						id = parts[parts.indexOf('drillviewid') + 1];
 						break;
-					case url.includes('kpis'): {
+					case url.includes('kpis/details/'): {
 						// Prefer Drill Path ID from breadcrumb when on a drill path
 						try {
 							const bcSpan = document.querySelector(
@@ -142,7 +143,8 @@ javascript: (() => {
 						break;
 					}
 					// App Studio: Prefer Card ID from modal when open; otherwise use Page ID from URL
-					case url.includes('page'): {
+					case url.includes('page/'):
+					case url.includes('pages/'): {
 						const detailsEl = document.querySelector('cd-details-title');
 						let kpiId;
 						try {
@@ -172,19 +174,15 @@ javascript: (() => {
 						}
 						break;
 					}
-					case url.includes('page'):
-						objectType = 'PAGE';
-						id = parts[parts.indexOf('page') + 1];
-						break;
-					case url.includes('beastmode'):
+					case url.includes('beastmode?'):
 						objectType = 'BEAST_MODE';
 						id = parts[parts.indexOf('id') + 1];
 						break;
-					case url.includes('datasources'):
+					case url.includes('datasources/'):
 						objectType = 'DATA_SOURCE';
 						id = parts[parts.indexOf('datasources') + 1];
 						break;
-					case url.includes('dataflows'):
+					case url.includes('dataflows/'):
 						objectType = 'DATAFLOW_TYPE';
 						id = parts[parts.indexOf('dataflows') + 1];
 						break;
@@ -200,95 +198,95 @@ javascript: (() => {
 						objectType = 'GROUP';
 						id = parts[parts.indexOf('groups') + 1];
 						break;
-					case url.includes('admin/roles') && !url.includes('tab=roles'):
+					case url.includes('admin/roles/'):
 						objectType = 'ROLE';
 						id = parts[parts.indexOf('roles') + 1];
 						break;
-					case url.includes('instances') && parts.length >= 8:
+					case url.includes('instances/') && parts.length >= 8:
 						objectType = 'WORKFLOW_INSTANCE';
 						id = parts[parts.length - 1];
 						break;
-					case url.includes('workflows'):
+					case url.includes('workflows/'):
 						objectType = 'WORKFLOW_MODEL';
 						id = parts[parts.indexOf('workflows') + 2];
 						break;
-					case url.includes('codeengine'):
+					case url.includes('codeengine/'):
 						objectType = 'CODEENGINE_PACKAGE';
 						id = parts[parts.indexOf('codeengine') + 1];
 						break;
-					case url.includes('appDb'):
+					case url.includes('appDb/'):
 						objectType = 'MAGNUM_COLLECTION';
 						id = parts[parts.indexOf('appDb') + 1];
 						break;
-					case url.includes('assetlibrary'):
+					case url.includes('assetlibrary/'):
 						objectType = 'APP';
 						id = parts[parts.indexOf('assetlibrary') + 1];
 						break;
-					case url.includes('pro-code-editor'):
+					case url.includes('pro-code-editor/'):
 						objectType = 'APP';
 						id = parts[parts.indexOf('pro-code-editor') + 1];
 						break;
-					case url.includes('datacenter/filesets'):
+					case url.includes('datacenter/filesets/'):
 						objectType = 'FILESET';
 						id = parts[parts.indexOf('filesets') + 1];
 						break;
-					case url.includes('ai-services/projects'):
+					case url.includes('ai-services/projects/'):
 						objectType = 'AI_PROJECT';
 						id = parts[parts.indexOf('projects') + 1];
 						break;
-					case url.includes('ai-services/models'):
+					case url.includes('ai-services/models/'):
 						objectType = 'AI_MODEL';
 						id = parts[parts.lastIndexOf('model') + 1];
 						break;
-					case url.includes('taskId'):
+					case url.includes('taskId='):
 						objectType = 'PROJECT_TASK';
 						id = parts[parts.indexOf('taskId') + 1];
 						break;
-					case url.includes('project'):
+					case url.includes('project/'):
 						objectType = 'PROJECT';
 						id = parts[parts.indexOf('project') + 1];
 						break;
-					case url.includes('key-results'):
+					case url.includes('key-results/'):
 						objectType = 'KEY_RESULT';
 						id = parts[parts.indexOf('key-results') + 1];
 						break;
-					case url.includes('goals/profile/user') && url.includes('/goal/'):
+					case url.includes('goals/profile/user/') && url.includes('/goal/'):
 						objectType = 'GOAL';
 						id = parts[parts.indexOf('goal') + 1];
 						break;
-					case url.includes('goals/profile/user'):
+					case url.includes('goals/profile/user/'):
 						objectType = 'USER';
 						id = parts[parts.indexOf('user') + 1];
 						break;
-					case url.includes('goals/tree'):
+					case url.includes('goals/tree/'):
 						objectType = 'GOAL';
 						id = parts[parts.indexOf('tree') + 1];
 						break;
-					case url.includes('goals/profile'):
+					case url.includes('goals/profile/'):
 						objectType = 'GOAL';
 						id = parts[parts.indexOf('goal') + 1];
 						break;
-					case url.includes('goals'):
+					case url.includes('goals/'):
 						objectType = 'GOAL';
 						id = parts[parts.indexOf('goals') + 1];
 						break;
-					case url.includes('queues') && url.includes('&id='):
+					case url.includes('queues') && url.includes('id='):
 						objectType = 'HOPPER_TASK';
 						id = parts[parts.indexOf('id') + 1];
 						break;
-					case url.includes('queueId'):
+					case url.includes('queueId='):
 						objectType = 'HOPPER_QUEUE';
 						id = parts[parts.indexOf('queueId') + 1];
 						break;
-					case url.includes('approval/request-details'):
+					case url.includes('approval/request-details/'):
 						objectType = 'APPROVAL';
 						id = parts[parts.indexOf('request-details') + 1];
 						break;
-					case url.includes('approval/edit-request-form'):
+					case url.includes('approval/edit-request-form/'):
 						objectType = 'TEMPLATE';
 						id = parts[parts.indexOf('edit-request-form') + 1];
 						break;
-					case url.includes('jupyter-workspaces'):
+					case url.includes('jupyter-workspaces/'):
 						objectType = 'DATA_SCIENCE_NOTEBOOK';
 						id = parts[parts.indexOf('jupyter-workspaces') + 1];
 						break;
@@ -296,12 +294,14 @@ javascript: (() => {
 						objectType = 'PUBLICATION';
 						id = parts[parts.indexOf('id') + 1];
 						break;
-					case url.includes('sandbox/repositories'):
+					case url.includes('sandbox/repositories/'):
 						objectType = 'REPOSITORY';
 						id = parts[parts.indexOf('repositories') + 1];
 						break;
 					default:
-						alert('Object type not supported.');
+						alert(
+							'Object type not supported. Make sure you are on a valid page and try again.'
+						);
 						throw new Error('Object type not recognized.');
 				}
 

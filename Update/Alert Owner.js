@@ -1,9 +1,10 @@
 javascript: (async () => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('alerts')) {
+	if (url.includes('alerts/')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -17,7 +18,7 @@ javascript: (async () => {
 		}
 
 		const newOwnerId = prompt(
-			'User ID of New Owner (Defaults to Current User ID):',
+			'Enter the user ID of new owner (defaults to current user ID):',
 			userId
 		);
 
@@ -50,19 +51,19 @@ javascript: (async () => {
 					window.location.reload();
 				} else {
 					alert(
-						`Failed to update Alert ${alertId} to Owner ${newOwnerId}.\nHTTP status: ${res.status}`
+						`Failed to update alert ${alertId} to owner ${newOwnerId}.\nHTTP status: ${res.status}`
 					);
 				}
 			})
 			.catch((error) => {
 				alert(
-					`Failed to update Alert ${alertId} to Owner ${newOwnerId}.\nError: ${error.message}`
+					`Failed to update alert ${alertId} to owner ${newOwnerId}.\nError: ${error.message}`
 				);
 				console.error(error);
 			});
 	} else {
 		alert(
-			'This bookmarklet can only be used on Alert URLs.\nPlease navigate to a valid Alert URL and try again.'
+			'This bookmarklet can only be used on alert URLs.\nPlease navigate to a valid alert URL and try again.'
 		);
 	}
 })();

@@ -1,9 +1,10 @@
 javascript: (async () => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('datasources')) {
+	if (url.includes('datasources/')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -13,9 +14,9 @@ javascript: (async () => {
 					const user = await res.json();
 					return user.userId || null;
 				} else {
-					alert(`Failed to fetch current User ID.\nHTTP status: ${res.status}`);
+					alert(`Failed to fetch current user ID.\nHTTP status: ${res.status}`);
 					throw new Error(
-						`Failed to fetch current User ID.\nHTTP status: ${res.status}`
+						`Failed to fetch current user ID.\nHTTP status: ${res.status}`
 					);
 				}
 			});
@@ -101,7 +102,7 @@ javascript: (async () => {
 					console.error(error);
 				});
 		} else {
-			alert('Failed to fetch current User ID. Please try again later.');
+			alert('Failed to fetch current user ID. Please try again later.');
 		}
 	} else {
 		alert(

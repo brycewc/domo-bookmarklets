@@ -1,11 +1,12 @@
 javascript: (() => {
 	// Ensure we are on a domo domain
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
 	const url = window.location.href;
-	if (url.includes('datasources') && url.includes('cards')) {
+	if (url.includes('datasources/')) {
 		const parts = url.split(/[/?=&]/);
 		const datasetId = parts[parts.indexOf('datasources') + 1];
 
@@ -637,7 +638,7 @@ javascript: (() => {
 			});
 	} else {
 		alert(
-			'This bookmarklet can only be used on DataSet Cards URLs.\nPlease navigate to a valid DataSet Cards URL and try again.'
+			'This bookmarklet can only be used on DataSet URLs.\nPlease navigate to a valid DataSet URL and try again.'
 		);
 	}
 })();

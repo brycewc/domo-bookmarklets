@@ -1,7 +1,7 @@
 javascript: (() => {
 	if (!window.location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
-		return;
+		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	if (
 		!/\/datasources\/[^/]+\/details\/data\/schema/.test(

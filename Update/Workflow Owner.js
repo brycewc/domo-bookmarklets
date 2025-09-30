@@ -1,9 +1,10 @@
 javascript: (async () => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('workflows')) {
+	if (url.includes('workflows/')) {
 		const parts = url.split(/[/?=&]/);
 		const workflowId = parts[parts.indexOf('models') + 1];
 		let userId = window.bootstrap.currentUser.USER_ID || null;
@@ -24,13 +25,13 @@ javascript: (async () => {
 		)
 			.then((res) => res.json())
 			.catch((error) => {
-				alert(`Failed to get Workflow ${workflowId}.\nError: ${error.message}`);
+				alert(`Failed to get workflow ${workflowId}.\nError: ${error.message}`);
 				console.error(error);
 			});
 
 		// Prompt for new owner ID while workflow is loading
 		let newOwnerId = prompt(
-			'User ID of New Owner (Defaults to Current User ID):',
+			'Enter the user ID of new owner (defaults to current user ID):',
 			userId
 		);
 
@@ -64,19 +65,19 @@ javascript: (async () => {
 					window.location.reload();
 				} else {
 					alert(
-						`Failed to update Workflow ${workflowId} to Owner ${userId}.\nHTTP status: ${res.status}`
+						`Failed to update workflow ${workflowId} to owner ${userId}.\nHTTP status: ${res.status}`
 					);
 				}
 			})
 			.catch((error) => {
 				alert(
-					`Failed to update Workflow ${workflowId} to Owner ${userId}.\nError: ${error.message}`
+					`Failed to update workflow ${workflowId} to owner ${userId}.\nError: ${error.message}`
 				);
 				console.error(error);
 			});
 	} else {
 		alert(
-			'This bookmarklet can only be used on Workflow URLs.\nPlease navigate to a valid Workflow URL and try again.'
+			'This bookmarklet can only be used on workflow URLs.\nPlease navigate to a valid workflow URL and try again.'
 		);
 	}
 })();

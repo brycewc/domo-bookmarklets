@@ -1,13 +1,14 @@
 javascript: (() => {
 	// Ensure we are on a domo domain
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
 	const url = window.location.href;
 
-	// --- Helper: attempt to pull a KPI/Card ID from an open details modal ---
-	function getModalKpiId() {
+	// --- Helper: attempt to pull a card ID from an open details modal ---
+	function getModalCardId() {
 		try {
 			const detailsEl = document.querySelector('cd-details-title');
 			if (
@@ -25,20 +26,13 @@ javascript: (() => {
 		return null;
 	}
 
-	// --- Helper: parse card id from URL segments (classic KPI detail URLs) ---
+	// --- Helper: parse card ID from URL segments ---
 	function getUrlCardId() {
-		// Common patterns observed:
-		// /kpis/details/{id}
-		// /kpis/preview/{id}
-		// /kpis/shared/details/{id}
-		// query params ?kpiId={id} or ?kpi={id}
 		const parts = url.split(/[/?&#=]/).filter(Boolean);
 		const idxDetails = parts.indexOf('details');
-		if (idxDetails !== -1 && parts[idxDetails + 1])
+		if (idxDetails !== -1 && parts[idxDetails + 1]) {
 			return parts[idxDetails + 1];
-		const idxPreview = parts.indexOf('preview');
-		if (idxPreview !== -1 && parts[idxPreview + 1])
-			return parts[idxPreview + 1];
+		}
 
 		// Query string
 		try {
@@ -50,7 +44,7 @@ javascript: (() => {
 		return null;
 	}
 
-	// --- Helper: attempt to discover card id from DOM data attributes (future-proofing) ---
+	// --- Helper: attempt to discover card ID from DOM data attributes (future-proofing) ---
 	function getDomDataCardId() {
 		// Look for any element that exposes a data attribute with plausible id
 		const selectorCandidates = [
@@ -74,13 +68,13 @@ javascript: (() => {
 	}
 
 	// Determine the cardId (priority: modal scope > URL > DOM data attributes)
-	const cardId = getModalKpiId() || getUrlCardId() || getDomDataCardId();
+	const cardId = getModalCardId() || getUrlCardId() || getDomDataCardId();
 
 	if (!cardId) {
 		alert(
-			'Unable to determine Card ID.\nOpen a card (details view or modal) and then run the bookmarklet again.'
+			'Unable to determine card ID.\nOpen a card (details view or modal) and then run the bookmarklet again.'
 		);
-		return;
+		throw new Error('Unable to determine card ID.');
 	}
 
 	// Build the request (adminAllPages includes pages, app studio pages, and report builder pages)
@@ -91,7 +85,7 @@ javascript: (() => {
 		.then(async (response) => {
 			if (!response.ok) {
 				alert(
-					`Failed to fetch Card ${cardId}.\nHTTP status: ${response.status}`
+					`Failed to fetch card ${cardId}.\nHTTP status: ${response.status}`
 				);
 				return;
 			}
@@ -99,7 +93,7 @@ javascript: (() => {
 			const card = cards && cards[0];
 			if (!card) {
 				alert(`Card ${cardId} not found.`);
-				return;
+				throw new Error(`Card ${cardId} not found.`);
 			}
 
 			const hasPages = card.adminAllPages && card.adminAllPages.length > 0;
@@ -202,7 +196,7 @@ javascript: (() => {
 			window.addEventListener('hashchange', cleanup);
 		})
 		.catch((error) => {
-			alert(`Failed to fetch Card ${cardId}.\nError: ${error.message}`);
+			alert(`Failed to fetch card ${cardId}.\nError: ${error.message}`);
 			console.error(error);
 		});
 })();

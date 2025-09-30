@@ -1,9 +1,10 @@
 javascript: (() => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('dataflows')) {
+	if (url.includes('dataflows/')) {
 		const parts = url.split(/[/?=&]/);
 		const dataflowId = parts[parts.indexOf('dataflows') + 1];
 

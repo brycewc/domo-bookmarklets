@@ -1,9 +1,10 @@
 javascript: (async () => {
 	if (!window.location.hostname.includes('domo.com')) {
+		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('page')) {
+	if (url.includes('page/') || url.includes('pages/')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(
@@ -13,9 +14,9 @@ javascript: (async () => {
 					const user = await res.json();
 					return user.userId || null;
 				} else {
-					alert(`Failed to fetch current User ID.\nHTTP status: ${res.status}`);
+					alert(`Failed to fetch current user ID.\nHTTP status: ${res.status}`);
 					throw new Error(
-						`Failed to fetch current User ID.\nHTTP status: ${res.status}`
+						`Failed to fetch current user ID.\nHTTP status: ${res.status}`
 					);
 				}
 			});
@@ -43,7 +44,7 @@ javascript: (async () => {
 								id: userId
 							}
 						],
-						message: 'Page shared with you via bookmarklet.'
+						message: 'Shared page with self via bookmarklet.'
 					})
 				}
 			)
@@ -52,20 +53,20 @@ javascript: (async () => {
 						window.location.reload();
 					} else {
 						alert(
-							`Failed to share Page ${pageId}.\nHTTP status: ${response.status}`
+							`Failed to share page ${pageId}.\nHTTP status: ${response.status}`
 						);
 					}
 				})
 				.catch((error) => {
-					alert(`Failed to share Page ${pageId}.\nError: ${error.message}`);
+					alert(`Failed to share page ${pageId}.\nError: ${error.message}`);
 					console.error(error);
 				});
 		} else {
-			alert('Failed to fetch current User ID. Please try again later.');
+			alert('Failed to fetch current user ID. Please try again later.');
 		}
 	} else {
 		alert(
-			'This bookmarklet can only be used on Page URLs.\nPlease navigate to a valid Page URL and try again.'
+			'This bookmarklet can only be used on page URLs.\nPlease navigate to a valid page URL and try again.'
 		);
 	}
 })();
