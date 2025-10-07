@@ -6,120 +6,90 @@ javascript: (() => {
 	const url = window.location.href;
 	if (url.includes('datasources/')) {
 		const parts = url.split(/[/?=&]/);
-		const viewId = parts[parts.indexOf('datasources') + 1];
+		const datasetId = parts[parts.indexOf('datasources') + 1];
 
 		fetch(
-			`https://${window.location.hostname}/api/data/v3/datasources/${viewId}?includeAllDetails=true`,
+			`https://${window.location.hostname}/api/data/v1/lineage/DATA_SOURCE/${datasetId}?traverseUp=false&requestEntities=DATA_SOURCE`,
 			{ method: 'GET' }
-		).then(async (viewResponse) => {
-			if (!viewResponse.ok) {
+		).then(async (datasetResponse) => {
+			if (!datasetResponse.ok) {
 				alert(
-					`Failed to fetch View ${viewId}.\nHTTP status: ${viewResponse.status}`
+					`Failed to fetch DataSet ${datasetId}.\nHTTP status: ${datasetResponse.status}`
 				);
 				return;
 			}
-			const view = await viewResponse.json();
-			const providerType =
-				view?.dataProviderType || view?.displayType || view?.type.toLowerCase();
-			if (providerType !== 'dataset-view') {
-				alert(
-					`DataSet ${viewId} is not a DataSet View. This bookmarklet only works on DataSet Views. Please navigate to a valid DataSet View and try again.`
-				);
-				return;
-			}
+			const datasetLineage = await datasetResponse.json();
+			const datasets = Object.values(datasetLineage);
 
-			// 1) Fetch the View schema
+			const datasetIds = datasets.map((ds) => ds.id);
+
 			fetch(
-				`https://${window.location.hostname}/api/query/v1/datasources/${viewId}/schema/indexed?includeHidden=true`,
-				{ method: 'GET' }
+				`https://${window.location.hostname}/api/data/v3/datasources/bulk?includePrivate=true&part=core,impactcounts&includeFormulas=false`,
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(datasetIds)
+				}
 			)
 				.then(async (response) => {
 					if (!response.ok) {
 						alert(
-							`Failed to fetch View ${viewId}.\nHTTP status: ${response.status}`
+							`Failed to fetch DataSet details.\nHTTP status: ${response.status}`
 						);
 						return;
 					}
-					const schema = await response.json();
+					const datasetsWithDetails = await response.json();
 
-					// 2) Extract DataSet IDs from select.selectBody.fromItem and joins
-					const sel =
-						schema && schema.select && schema.select.selectBody
-							? schema.select.selectBody
-							: null;
-					if (!sel) {
-						alert('No select body found in schema.');
-						return;
-					}
-					const idsSet = new Set();
-					const stripTicks = (s) =>
-						typeof s === 'string' ? s.replace(/`/g, '') : s;
-					if (sel.fromItem && sel.fromItem.name) {
-						idsSet.add(stripTicks(sel.fromItem.name));
-					}
-					if (Array.isArray(sel.joins)) {
-						for (const j of sel.joins) {
-							if (!j) continue;
-							// If left is true, use rightItem.name; if left is false, use leftItem.name
-							const name =
-								j.left === false
-									? j.leftItem && j.leftItem.name
-									: j.rightItem && j.rightItem.name;
-							if (name) idsSet.add(stripTicks(name));
-						}
-					}
-
-					const dataSourceIds = Array.from(idsSet).filter(Boolean);
-					if (dataSourceIds.length === 0) {
-						alert('No DataSets found in this View.');
-						return;
-					}
-
-					// 3) Fetch DataSet names via bulk endpoint
-					const bulkUrl = `https://${window.location.hostname}/api/data/v3/datasources/bulk?includePrivate=true&includeAllDetails=true`;
-					const namesResp = await fetch(bulkUrl, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(dataSourceIds)
-					});
-					if (!namesResp.ok) {
-						alert(
-							`Failed to fetch DataSet names.\nHTTP status: ${namesResp.status}`
-						);
-						return;
-					}
-					const namesJson = await namesResp.json();
-					const dsArray = (namesJson && namesJson.dataSources) || [];
+					const dsArray =
+						(datasetsWithDetails && datasetsWithDetails.dataSources) || [];
 
 					if (!Array.isArray(dsArray) || dsArray.length === 0) {
 						alert('No DataSets returned from bulk API.');
 						return;
 					}
 
-					// 4) Build modal with just DataSets (names + links)
-					// Keep original request order when possible
+					// Extract current dataset info for the title
+					const currentDataset = dsArray.find(
+						(d) => (d.id || d.dataSourceId) === datasetId
+					);
+					const dataset = currentDataset || {
+						name: `DataSet ${datasetId}`,
+						id: datasetId
+					};
+
+					// Build modal with dependent DataSets (exclude current dataset from list)
 					const byId = Object.fromEntries(
 						dsArray.map((d) => [d.id || d.dataSourceId, d])
 					);
-					const ordered = dataSourceIds.map((id) => byId[id]).filter(Boolean);
+					const dependentDatasetIds = datasetIds.filter(
+						(id) => id !== datasetId
+					);
+					const ordered = dependentDatasetIds
+						.map((id) => byId[id])
+						.filter(Boolean);
 
 					const listHtml = `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;list-style:disc;">${ordered
 						.map((d) => {
 							const id = d.id || d.dataSourceId;
 							const name = d.name || d.dataSourceName || `DataSet ${id}`;
-							return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a></li>`;
+							const cardCount = d?.cardCount || 0;
+							const cardText = cardCount === 1 ? 'card' : 'cards';
+							const dataflowCount = d?.dataFlowCount || 0;
+							const dataflowText =
+								dataflowCount === 1 ? 'dataflow' : 'dataflows';
+							return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a> <span style="color:#666;font-size:0.9em;">(${cardCount} ${cardText}, ${dataflowCount} ${dataflowText})</span></li>`;
 						})
 						.join('')}</ul>`;
-
 					const message = `
-	<div style="font-family:sans-serif;">
-		<div style="display:flex;align-items:flex-start;justify-content:space-between;">
-			<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-				View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
-			</strong>
-		</div>
-		${listHtml}
-	</div>`;
+            <div style="font-family:sans-serif;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                <strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
+                  DataSet <a href="https://${window.location.hostname}/datasources/${datasetId}/details/overview" target="_blank" style="text-decoration:underline;">${dataset.name}</a> (ID: ${datasetId}) has the following dependent DataSet Views:
+                </strong>
+              </div>
+              ${listHtml}
+            </div>
+          `;
 
 					// Modal container
 					const modal = document.createElement('div');
@@ -187,7 +157,7 @@ javascript: (() => {
 					window.addEventListener('hashchange', cleanup);
 				})
 				.catch((error) => {
-					alert(`Failed to fetch View ${viewId}.\nError: ${error.message}`);
+					alert(`Failed to fetch View ${datasetId}.\nError: ${error.message}`);
 					console.error(error);
 				});
 		});
