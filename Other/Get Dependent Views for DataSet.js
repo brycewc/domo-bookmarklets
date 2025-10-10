@@ -68,23 +68,37 @@ javascript: (() => {
 						.map((id) => byId[id])
 						.filter(Boolean);
 
-					const listHtml = `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;list-style:disc;">${ordered
-						.map((d) => {
-							const id = d.id || d.dataSourceId;
-							const name = d.name || d.dataSourceName || `DataSet ${id}`;
-							const cardCount = d?.cardCount || 0;
-							const cardText = cardCount === 1 ? 'card' : 'cards';
-							const dataflowCount = d?.dataFlowCount || 0;
-							const dataflowText =
-								dataflowCount === 1 ? 'dataflow' : 'dataflows';
-							return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a> <span style="color:#666;font-size:0.9em;">(${cardCount} ${cardText}, ${dataflowCount} ${dataflowText})</span></li>`;
-						})
-						.join('')}</ul>`;
+					// Check if there are no dependent views
+					let listHtml;
+					if (ordered.length === 0) {
+						listHtml = `<p style="margin-top:0.5em;margin-bottom:1em;color:#666;font-style:italic;">No dependent DataSet Views found. This DataSet is not used by any other DataSets.</p>`;
+					} else {
+						listHtml = `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;list-style:disc;">${ordered
+							.map((d) => {
+								const id = d.id || d.dataSourceId;
+								const name = d.name || d.dataSourceName || `DataSet ${id}`;
+								const cardCount = d?.cardCount || 0;
+								const cardText = cardCount === 1 ? 'card' : 'cards';
+								const dataflowCount = d?.dataFlowCount || 0;
+								const dataflowText =
+									dataflowCount === 1 ? 'dataflow' : 'dataflows';
+								return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a> <span style="color:#666;font-size:0.9em;">(${cardCount} ${cardText}, ${dataflowCount} ${dataflowText})</span></li>`;
+							})
+							.join('')}</ul>`;
+					}
 					const message = `
             <div style="font-family:sans-serif;">
               <div style="display:flex;align-items:flex-start;justify-content:space-between;">
                 <strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-                  DataSet <a href="https://${window.location.hostname}/datasources/${datasetId}/details/overview" target="_blank" style="text-decoration:underline;">${dataset.name}</a> (ID: ${datasetId}) has the following dependent DataSet Views:
+                  DataSet <a href="https://${
+										window.location.hostname
+									}/datasources/${datasetId}/details/overview" target="_blank" style="text-decoration:underline;">${
+						dataset.name
+					}</a> (ID: ${datasetId})${
+						ordered.length === 0
+							? ':'
+							: ' has the following dependent DataSet Views:'
+					}
                 </strong>
               </div>
               ${listHtml}
@@ -113,25 +127,28 @@ javascript: (() => {
 						'position:absolute;top:16px;right:16px;font-size:28px;background:none;border:none;cursor:pointer;color:#333;line-height:1;width:36px;height:36px;'
 					);
 
-					// Open All button (icon-only)
-					const openAllBtn = document.createElement('button');
-					openAllBtn.setAttribute(
-						'style',
-						'position:absolute;top:16px;right:56px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;background:none;border:none;cursor:pointer;color:#333;line-height:1;'
-					);
-					openAllBtn.title = 'Open all DataSets, each in a new tab';
-					openAllBtn.innerHTML =
-						'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
-					openAllBtn.onclick = () => {
-						for (const d of ordered) {
-							const id = d.id || d.dataSourceId;
-							if (!id) continue;
-							window.open(
-								`https://${window.location.hostname}/datasources/${id}/details/overview`,
-								'_blank'
-							);
-						}
-					};
+					// Open All button (icon-only) - only show if there are dependent views
+					let openAllBtn = null;
+					if (ordered.length > 0) {
+						openAllBtn = document.createElement('button');
+						openAllBtn.setAttribute(
+							'style',
+							'position:absolute;top:16px;right:56px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;background:none;border:none;cursor:pointer;color:#333;line-height:1;'
+						);
+						openAllBtn.title = 'Open all DataSets, each in a new tab';
+						openAllBtn.innerHTML =
+							'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+						openAllBtn.onclick = () => {
+							for (const d of ordered) {
+								const id = d.id || d.dataSourceId;
+								if (!id) continue;
+								window.open(
+									`https://${window.location.hostname}/datasources/${id}/details/overview`,
+									'_blank'
+								);
+							}
+						};
+					}
 
 					// URL change cleanup
 					let urlWatcher;
@@ -144,7 +161,7 @@ javascript: (() => {
 					closeBtn.onclick = cleanup;
 
 					modalContent.innerHTML = message;
-					modalContent.appendChild(openAllBtn);
+					if (openAllBtn) modalContent.appendChild(openAllBtn);
 					modalContent.appendChild(closeBtn);
 					modal.appendChild(modalContent);
 					document.body.appendChild(modal);
