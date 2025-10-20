@@ -103,17 +103,17 @@ javascript: (() => {
 				objectIdColumn: activityLogObjectIdColumnName,
 				objectTypeColumn: activityLogObjectTypeColumnName
 			}) => {
-				let objectType;
+				let objectType = [];
 				let id;
 				const url = window.location.href;
 				const parts = url.split(/[/?=&]/);
 				switch (true) {
 					case url.includes('alerts/'):
-						objectType = 'ALERT';
+						objectType.push('ALERT');
 						id = parts[parts.indexOf('alerts') + 1];
 						break;
 					case url.includes('drillviewid='):
-						objectType = 'DRILL_VIEW';
+						objectType.push('DRILL_VIEW');
 						id = parts[parts.indexOf('drillviewid') + 1];
 						break;
 					case url.includes('kpis/details/'): {
@@ -129,7 +129,7 @@ javascript: (() => {
 								const dpIdRaw = partsColon[1];
 								const dpId = dpIdRaw && (dpIdRaw.match(/\d+/) || [])[0];
 								if (dpId) {
-									objectType = 'DRILL_VIEW';
+									objectType.push('DRILL_VIEW');
 									id = dpId;
 									break;
 								}
@@ -138,7 +138,7 @@ javascript: (() => {
 							// ignore and fall back
 						}
 						// Fallback: Card ID from URL
-						objectType = 'CARD';
+						objectType.push('CARD');
 						id = parts[parts.indexOf('details') + 1];
 						break;
 					}
@@ -161,12 +161,12 @@ javascript: (() => {
 						}
 
 						if (kpiId) {
-							objectType = 'CARD';
+							objectType.push('CARD');
 							id = kpiId;
 						} else {
-							objectType = url.includes('app-studio')
-								? 'DATA_APP_VIEW'
-								: 'PAGE';
+							objectType.push(
+								url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE'
+							);
 							id =
 								objectType === 'DATA_APP_VIEW'
 									? parts[parts.indexOf('pages') + 1]
@@ -175,128 +175,144 @@ javascript: (() => {
 						break;
 					}
 					case url.includes('beastmode?'):
-						objectType = 'BEAST_MODE';
+						objectType.push('BEAST_MODE_FORMULA');
+						objectType.push('VARIABLE');
 						id = parts[parts.indexOf('id') + 1];
 						break;
 					case url.includes('datasources/'):
-						objectType = 'DATA_SOURCE';
+						objectType.push('DATA_SOURCE');
+						objectType.push('DATASET');
+						objectType.push('VIEW');
+						objectType.push('VIEW_ADVANCED_EDITOR');
+						objectType.push('DUPLICATED_DATA_SOURCE');
 						id = parts[parts.indexOf('datasources') + 1];
 						break;
 					case url.includes('dataflows/'):
-						objectType = 'DATAFLOW_TYPE';
+						objectType.push('DATAFLOW_TYPE');
 						id = parts[parts.indexOf('dataflows') + 1];
 						break;
 					case url.includes('people/'):
-						objectType = 'USER';
+						objectType.push('USER');
 						id = parts[parts.indexOf('people') + 1];
 						break;
 					case url.includes('/up/'):
-						objectType = 'USER';
+						objectType.push('USER');
 						id = parts[parts.indexOf('up') + 1];
 						break;
 					case url.includes('groups/'):
-						objectType = 'GROUP';
+						objectType.push('GROUP');
 						id = parts[parts.indexOf('groups') + 1];
 						break;
 					case url.includes('admin/roles/'):
-						objectType = 'ROLE';
+						objectType.push('ROLE');
 						id = parts[parts.indexOf('roles') + 1];
 						break;
 					case url.includes('instances/') && parts.length >= 8:
-						objectType = 'WORKFLOW_INSTANCE';
+						objectType.push('WORKFLOW_INSTANCE');
 						id = parts[parts.length - 1];
 						break;
 					case url.includes('workflows/'):
-						objectType = 'WORKFLOW_MODEL';
+						objectType.push('WORKFLOW_MODEL');
 						id = parts[parts.indexOf('workflows') + 2];
 						break;
 					case url.includes('codeengine/'):
-						objectType = 'CODEENGINE_PACKAGE';
+						objectType.push('CODEENGINE_PACKAGE');
+						objectType.push('FUNCTION');
 						id = parts[parts.indexOf('codeengine') + 1];
 						break;
 					case url.includes('appDb/'):
-						objectType = 'MAGNUM_COLLECTION';
+						objectType.push('MAGNUM_COLLECTION');
 						id = parts[parts.indexOf('appDb') + 1];
 						break;
 					case url.includes('assetlibrary/'):
-						objectType = 'APP';
+						objectType.push('APP');
+						objectType.push('RYUU_APP');
 						id = parts[parts.indexOf('assetlibrary') + 1];
 						break;
 					case url.includes('pro-code-editor/'):
-						objectType = 'APP';
+						objectType.push('APP');
+						objectType.push('RYUU_APP');
 						id = parts[parts.indexOf('pro-code-editor') + 1];
 						break;
 					case url.includes('datacenter/filesets/'):
-						objectType = 'FILESET';
+						objectType.push('FILESET');
 						id = parts[parts.indexOf('filesets') + 1];
 						break;
 					case url.includes('ai-services/projects/'):
-						objectType = 'AI_PROJECT';
+						objectType.push('AI_PROJECT');
 						id = parts[parts.indexOf('projects') + 1];
 						break;
 					case url.includes('ai-services/models/'):
-						objectType = 'AI_MODEL';
+						objectType.push('AI_MODEL');
 						id = parts[parts.lastIndexOf('model') + 1];
 						break;
 					case url.includes('taskId='):
-						objectType = 'PROJECT_TASK';
+						objectType.push('PROJECT_TASK');
 						id = parts[parts.indexOf('taskId') + 1];
 						break;
 					case url.includes('project/'):
-						objectType = 'PROJECT';
+						objectType.push('PROJECT');
 						id = parts[parts.indexOf('project') + 1];
 						break;
 					case url.includes('key-results/'):
-						objectType = 'KEY_RESULT';
+						objectType.push('KEY_RESULT');
 						id = parts[parts.indexOf('key-results') + 1];
 						break;
 					case url.includes('goals/profile/user/') && url.includes('/goal/'):
-						objectType = 'GOAL';
+						objectType.push('GOAL');
+						objectType.push('OBJECTIVE');
 						id = parts[parts.indexOf('goal') + 1];
 						break;
 					case url.includes('goals/profile/user/'):
-						objectType = 'USER';
+						objectType.push('USER');
 						id = parts[parts.indexOf('user') + 1];
 						break;
 					case url.includes('goals/tree/'):
-						objectType = 'GOAL';
+						objectType.push('GOAL');
+						objectType.push('OBJECTIVE');
 						id = parts[parts.indexOf('tree') + 1];
 						break;
 					case url.includes('goals/profile/'):
-						objectType = 'GOAL';
+						objectType.push('GOAL');
+						objectType.push('OBJECTIVE');
 						id = parts[parts.indexOf('goal') + 1];
 						break;
 					case url.includes('goals/'):
-						objectType = 'GOAL';
+						objectType.push('GOAL');
+						objectType.push('OBJECTIVE');
 						id = parts[parts.indexOf('goals') + 1];
 						break;
 					case url.includes('queues') && url.includes('id='):
-						objectType = 'HOPPER_TASK';
+						objectType.push('HOPPER_TASK');
 						id = parts[parts.indexOf('id') + 1];
 						break;
 					case url.includes('queueId='):
-						objectType = 'HOPPER_QUEUE';
+						objectType.push('HOPPER_QUEUE');
 						id = parts[parts.indexOf('queueId') + 1];
 						break;
 					case url.includes('approval/request-details/'):
-						objectType = 'APPROVAL';
+						objectType.push('APPROVAL');
 						id = parts[parts.indexOf('request-details') + 1];
 						break;
 					case url.includes('approval/edit-request-form/'):
-						objectType = 'TEMPLATE';
+						objectType.push('TEMPLATE');
 						id = parts[parts.indexOf('edit-request-form') + 1];
 						break;
 					case url.includes('jupyter-workspaces/'):
-						objectType = 'DATA_SCIENCE_NOTEBOOK';
+						objectType.push('DATA_SCIENCE_NOTEBOOK');
 						id = parts[parts.indexOf('jupyter-workspaces') + 1];
 						break;
 					case url.includes('domo-everywhere/publications'):
-						objectType = 'PUBLICATION';
+						objectType.push('PUBLICATION');
 						id = parts[parts.indexOf('id') + 1];
 						break;
 					case url.includes('sandbox/repositories/'):
-						objectType = 'REPOSITORY';
+						objectType.push('REPOSITORY');
 						id = parts[parts.indexOf('repositories') + 1];
+						break;
+					case url.includes('filesets/'):
+						objectType.push('FILESET');
+						id = parts[parts.indexOf('filesets') + 1];
 						break;
 					default:
 						alert(
@@ -309,7 +325,7 @@ javascript: (() => {
 					{
 						column: activityLogObjectTypeColumnName,
 						operand: 'IN',
-						values: [objectType]
+						values: objectType
 					},
 					{ column: activityLogObjectIdColumnName, operand: 'IN', values: [id] }
 				];

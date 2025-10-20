@@ -29,7 +29,7 @@ javascript: (async () => {
 		return;
 	}
 
-	function showSuccess(message, reload = true, duration = 3000) {
+	function showSuccess(message, reload = true) {
 		let element = document.createElement('div');
 		element.setAttribute(
 			'style',
@@ -42,7 +42,6 @@ javascript: (async () => {
 		if (reload) {
 			let countdown = document.getElementById('countdown');
 			let width = 100;
-			let intervalTime = duration / 100;
 			let interval = setInterval(function () {
 				width--;
 				countdown.style.width = width + '%';
@@ -51,7 +50,7 @@ javascript: (async () => {
 					element.parentNode.removeChild(element);
 					window.location.reload();
 				}
-			}, intervalTime);
+			}, 20);
 		}
 	}
 
