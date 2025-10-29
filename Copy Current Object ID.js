@@ -73,7 +73,7 @@ javascript: (() => {
 			break;
 		}
 		case url.includes('beastmode?'):
-			objectType = 'BEAST_MODE';
+			objectType = 'BEAST_MODE_FORMULA';
 			id = parts[parts.indexOf('id') + 1];
 			break;
 		case url.includes('datasources/'):
@@ -149,7 +149,7 @@ javascript: (() => {
 			id = parts[parts.indexOf('key-results') + 1];
 			break;
 		case url.includes('goals/profile/user/') && url.includes('/goal/'):
-			objectType = 'GOAL';
+			objectType = 'OBJECTIVE';
 			id = parts[parts.indexOf('goal') + 1];
 			break;
 		case url.includes('goals/profile/user/'):
@@ -157,15 +157,15 @@ javascript: (() => {
 			id = parts[parts.indexOf('user') + 1];
 			break;
 		case url.includes('goals/tree/'):
-			objectType = 'GOAL';
+			objectType = 'OBJECTIVE';
 			id = parts[parts.indexOf('tree') + 1];
 			break;
 		case url.includes('goals/profile/'):
-			objectType = 'GOAL';
+			objectType = 'OBJECTIVE';
 			id = parts[parts.indexOf('goal') + 1];
 			break;
 		case url.includes('goals/'):
-			objectType = 'GOAL';
+			objectType = 'OBJECTIVE';
 			id = parts[parts.indexOf('goals') + 1];
 			break;
 		case url.includes('queues') && url.includes('id='):
@@ -196,6 +196,10 @@ javascript: (() => {
 			objectType = 'REPOSITORY';
 			id = parts[parts.indexOf('repositories') + 1];
 			break;
+		case url.includes('filesets/'):
+			objectType.push('FILESET');
+			id = parts[parts.indexOf('filesets') + 1];
+			break;
 		default:
 			alert(
 				'Object type not supported. Make sure you are on a valid page and try again.'
@@ -224,5 +228,5 @@ javascript: (() => {
 			clearInterval(interval);
 			element.parentNode.removeChild(element);
 		}
-	}, 30); // Adjust the interval time to match the total duration
+	}, 30);
 })();

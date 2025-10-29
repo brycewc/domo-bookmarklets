@@ -9,7 +9,7 @@ This repository is a collection of helpful [bookmarklets](https://en.wikipedia.o
 - [Delete > Beast Mode](<Delete/Beast Mode.js>) - In Beast Mode Manager, delete the current Beast Mode (not supported in the UI!).
 - [Other > Enable Data Repair](<Other/Enable Data Repair.js>) - Enable data repair on the current DataSet, which allows you to download, replace, or delete updates to rows in the DataSet.
 - [Other > Get All Pages for Card](<Other/Get All Pages for Card.js>) - Shows all pages/dashboards, app studio apps, and report builder reports that contain the current card.
-- [Other > Share Page with Self](<Other/Share Page with Self.js>) - As an admin, quickly share the current page with yourself without navigating to admin settings.
+- [Other > Share with Self](<Other/Share with Self.js>) - As an admin, quickly share the current page, DataSet account, or custom app design (depending on current URL) with yourself without navigating to admin settings.
 - [Update > DataFlow Name](<Update/DataFlow Name.js>) - Rename the current DataFlow, _without creating a new version_.
 
 ## Types of Bookmarklets
@@ -19,7 +19,7 @@ This repository is separated into 4 different folders, each holding a different 
 - **Root** - Two quick access bookmarklets: Activity Log Current Object and Copy Current Object ID.
 - **Delete** - Delete an object or objects e.g., Beast Mode, Page and All Cards, etc.
 - **Navigate to Copied** - Navigate to an object based on an ID already copied to your clipboard.
-- **Other** - Other helpful scripts that don't fit into the other categories e.g., Get All Pages for Card, Share Page with Self, etc.
+- **Other** - Other helpful scripts that don't fit into the other categories e.g., Get All Pages for Card, Share with Self, etc.
 - **Update** - Update an object e.g., Alert Owner, DataFlow Name, etc.
 
 ## Syncing Bookmarklets to Your Browser Favorites
