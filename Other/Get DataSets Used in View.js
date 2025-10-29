@@ -4,9 +4,11 @@ javascript: (() => {
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	const url = window.location.href;
-	if (url.includes('datasources/')) {
+	if (url.includes('datasources/') || url.includes('fusion/')) {
 		const parts = url.split(/[/?=&]/);
-		const viewId = parts[parts.indexOf('datasources') + 1];
+		const viewId = url.includes('datasources/')
+			? parts[parts.indexOf('datasources') + 1]
+			: parts[parts.indexOf('fusion') + 1];
 
 		fetch(
 			`https://${window.location.hostname}/api/data/v3/datasources/${viewId}?includeAllDetails=true`,
@@ -131,14 +133,15 @@ javascript: (() => {
 						.join('')}</ul>`;
 
 					const message = `
-	<div style="font-family:sans-serif;">
-		<div style="display:flex;align-items:flex-start;justify-content:space-between;">
-			<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-				View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
-			</strong>
-		</div>
-		${listHtml}
-	</div>`;
+						<div style="font-family:sans-serif;">
+							<div style="display:flex;align-items:flex-start;justify-content:space-between;">
+								<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
+									View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
+								</strong>
+							</div>
+							${listHtml}
+						</div>
+					`;
 
 					// Modal container
 					const modal = document.createElement('div');
