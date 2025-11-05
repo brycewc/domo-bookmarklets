@@ -167,10 +167,9 @@ javascript: (() => {
 							objectType.push(
 								url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE'
 							);
-							id =
-								objectType === 'DATA_APP_VIEW'
-									? parts[parts.indexOf('pages') + 1]
-									: parts[parts.indexOf('page') + 1];
+							id = url.includes('app-studio')
+								? parts[parts.indexOf('pages') + 1]
+								: parts[parts.indexOf('page') + 1];
 						}
 						break;
 					}

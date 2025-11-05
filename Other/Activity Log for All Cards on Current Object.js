@@ -100,7 +100,8 @@ javascript: (() => {
 		const parts = url.split(/[/?=&]/);
 
 		switch (true) {
-			case url.includes('page/') || url.includes('pages/'): {
+			case url.includes('page/'):
+			case url.includes('pages/'): {
 				const pageId = url.includes('app-studio')
 					? parts[parts.indexOf('pages') + 1]
 					: parts[parts.indexOf('page') + 1];
