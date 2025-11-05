@@ -1,9 +1,9 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('datasources/') || url.includes('fusion/')) {
 		const parts = url.split(/[/?=&]/);
 		const viewId = url.includes('datasources/')
@@ -11,7 +11,7 @@ javascript: (() => {
 			: parts[parts.indexOf('fusion') + 1];
 
 		fetch(
-			`https://${window.location.hostname}/api/data/v3/datasources/${viewId}?includeAllDetails=true`,
+			`${location.origin}/api/data/v3/datasources/${viewId}?includeAllDetails=true`,
 			{ method: 'GET' }
 		).then(async (viewResponse) => {
 			if (!viewResponse.ok) {
@@ -32,7 +32,7 @@ javascript: (() => {
 
 			// 1) Fetch the View schema
 			fetch(
-				`https://${window.location.hostname}/api/query/v1/datasources/${viewId}/schema/indexed?includeHidden=true`,
+				`${location.origin}/api/query/v1/datasources/${viewId}/schema/indexed?includeHidden=true`,
 				{ method: 'GET' }
 			)
 				.then(async (response) => {
@@ -97,7 +97,7 @@ javascript: (() => {
 					}
 
 					// 3) Fetch DataSet names via bulk endpoint
-					const bulkUrl = `https://${window.location.hostname}/api/data/v3/datasources/bulk?includePrivate=true&includeAllDetails=true`;
+					const bulkUrl = `${location.origin}/api/data/v3/datasources/bulk?includePrivate=true&includeAllDetails=true`;
 					const namesResp = await fetch(bulkUrl, {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
@@ -128,7 +128,7 @@ javascript: (() => {
 						.map((d) => {
 							const id = d.id || d.dataSourceId;
 							const name = d.name || d.dataSourceName || `DataSet ${id}`;
-							return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a></li>`;
+							return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="${location.origin}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a></li>`;
 						})
 						.join('')}</ul>`;
 
@@ -136,7 +136,7 @@ javascript: (() => {
 						<div style="font-family:sans-serif;">
 							<div style="display:flex;align-items:flex-start;justify-content:space-between;">
 								<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
-									View <a href="https://${window.location.hostname}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
+									View <a href="${location.origin}/datasources/${viewId}/details/overview" target="_blank" style="text-decoration:underline;">${view.name}</a> (ID: ${viewId}) contains the following DataSets:
 								</strong>
 							</div>
 							${listHtml}
@@ -179,7 +179,7 @@ javascript: (() => {
 							const id = d.id || d.dataSourceId;
 							if (!id) continue;
 							window.open(
-								`https://${window.location.hostname}/datasources/${id}/details/overview`,
+								`${location.origin}/datasources/${id}/details/overview`,
 								'_blank'
 							);
 						}
@@ -201,9 +201,9 @@ javascript: (() => {
 					modal.appendChild(modalContent);
 					document.body.appendChild(modal);
 
-					const initialUrl = window.location.href;
+					const initialUrl = location.href;
 					urlWatcher = setInterval(() => {
-						if (window.location.href !== initialUrl) cleanup();
+						if (location.href !== initialUrl) cleanup();
 					}, 500);
 					window.addEventListener('popstate', cleanup);
 					window.addEventListener('hashchange', cleanup);

@@ -1,9 +1,9 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('page/') || url.includes('pages/')) {
 		const parts = url.split(/[/?=&]/);
 		const pageType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
@@ -16,7 +16,7 @@ javascript: (() => {
 				? parts[parts.indexOf('pages') + 1]
 				: parts[parts.indexOf('page') + 1];
 		const response = fetch(
-			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards`,
+			`${location.origin}/api/content/v3/stacks/${pageId}/cards`,
 			{
 				method: 'GET'
 			}
@@ -33,7 +33,7 @@ javascript: (() => {
 						const cardIds = page.cards.map((card) => card.id).join(',');
 
 						fetch(
-							`https://${window.location.hostname}/api/content/v1/cards/bulk?cardIds=${cardIds}`,
+							`${location.origin}/api/content/v1/cards/bulk?cardIds=${cardIds}`,
 							{
 								method: 'DELETE'
 							}
@@ -44,7 +44,7 @@ javascript: (() => {
 										pageType === 'PAGE'
 											? `/api/content/v1/pages/${pageId}`
 											: `/api/content/v1/dataapps/${appId}/views/${pageId}`;
-									fetch(`https://${window.location.hostname}${pageDeleteUrl}`, {
+									fetch(`${location.origin}${pageDeleteUrl}`, {
 										method: 'DELETE'
 									})
 										.then((response) => {

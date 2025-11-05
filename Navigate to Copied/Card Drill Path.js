@@ -1,18 +1,15 @@
 javascript: (() => {
 	navigator.clipboard.readText().then((drillViewId) => {
-		fetch(
-			`https://${window.location.hostname}/api/content/v1/cards/${drillViewId}/urn`,
-			{
-				method: 'GET'
-			}
-		)
+		fetch(`${location.origin}/api/content/v1/cards/${drillViewId}/urn`, {
+			method: 'GET'
+		})
 			.then(async (response) => {
 				if (response.ok) {
 					const card = await response.json();
 					Object.assign(document.createElement('a'), {
 						target: '_blank',
 						rel: 'noopener noreferrer',
-						href: `https://${window.location.hostname}/analyzer?cardid=${card.rootId}&drillviewid=${drillViewId}`
+						href: `${location.origin}/analyzer?cardid=${card.rootId}&drillviewid=${drillViewId}`
 					}).click();
 				} else {
 					alert(

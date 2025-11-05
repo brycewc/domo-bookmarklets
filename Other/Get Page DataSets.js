@@ -1,9 +1,9 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('page/') || url.includes('pages/')) {
 		const parts = url.split(/[/?=&]/);
 		const pageType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
@@ -17,7 +17,7 @@ javascript: (() => {
 				: parts[parts.indexOf('page') + 1];
 
 		fetch(
-			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards?parts=datasources`,
+			`${location.origin}/api/content/v3/stacks/${pageId}/cards?parts=datasources`,
 			{
 				method: 'GET'
 			}
@@ -97,18 +97,18 @@ javascript: (() => {
 												)
 												.map((c) =>
 													pageType === 'DATA_APP_VIEW'
-														? `<li style="margin:0.125em 0;list-style:disc;"><a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}/kpis/details/${c.id}" target="_blank" style="text-decoration:underline;">${c.title}</a></li>`
-														: `<li style="margin:0.125em 0;list-style:disc;"><a href="https://${window.location.hostname}/page/${pageId}/kpis/details/${c.id}" target="_blank" style="text-decoration:underline;">${c.title}</a></li>`
+														? `<li style="margin:0.125em 0;list-style:disc;"><a href="${location.origin}/app-studio/${appId}/pages/${pageId}/kpis/details/${c.id}" target="_blank" style="text-decoration:underline;">${c.title}</a></li>`
+														: `<li style="margin:0.125em 0;list-style:disc;"><a href="${location.origin}/page/${pageId}/kpis/details/${c.id}" target="_blank" style="text-decoration:underline;">${c.title}</a></li>`
 												)
 												.join('')}</ul></div>`
 										: '';
-									return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/datasources/${dsId}/details/overview" target="_blank" style="text-decoration:underline;">${dsName}</a><button class="ds-count" data-dsid="${dsId}" aria-expanded="false" title="Show cards using this DataSet" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="ds-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button>${cardsHtml}</li>`;
+									return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="${location.origin}/datasources/${dsId}/details/overview" target="_blank" style="text-decoration:underline;">${dsName}</a><button class="ds-count" data-dsid="${dsId}" aria-expanded="false" title="Show cards using this DataSet" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="ds-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button>${cardsHtml}</li>`;
 								})
 								.join('')}</ul>`;
 							const pageUrls =
 								pageType === 'DATA_APP_VIEW'
-									? `<a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}" target="_blank">App Page ${page.page.title}</a>`
-									: `<a href="https://${window.location.hostname}/page/${pageId}" target="_blank">Page ${page.page.title}</a>`;
+									? `<a href="${location.origin}/app-studio/${appId}/pages/${pageId}" target="_blank">App Page ${page.page.title}</a>`
+									: `<a href="${location.origin}/page/${pageId}" target="_blank">Page ${page.page.title}</a>`;
 							const message = `
     <div style="font-family:sans-serif;">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;">
@@ -159,7 +159,7 @@ javascript: (() => {
 										dataset.dataSetId;
 									if (!dsId) continue;
 									window.open(
-										`https://${window.location.hostname}/datasources/${dsId}/details/overview`,
+										`${location.origin}/datasources/${dsId}/details/overview`,
 										'_blank'
 									);
 								}
@@ -211,9 +211,9 @@ javascript: (() => {
 							document.body.appendChild(modal);
 
 							// Watch for URL changes (SPA navigation or back/forward)
-							const initialUrl = window.location.href;
+							const initialUrl = location.href;
 							urlWatcher = setInterval(() => {
-								if (window.location.href !== initialUrl) {
+								if (location.href !== initialUrl) {
 									cleanup();
 								}
 							}, 500);

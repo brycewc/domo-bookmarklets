@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/admin/groups/${text}?tab=people`
+			href: `${location.origin}/admin/groups/${text}?tab=people`
 		}).click();
 	});
 })();

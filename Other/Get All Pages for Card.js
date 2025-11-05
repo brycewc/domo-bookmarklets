@@ -1,11 +1,11 @@
 javascript: (() => {
 	// Ensure we are on a domo domain
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
-	const url = window.location.href;
+	const url = location.href;
 
 	// --- Helper: attempt to pull a card ID from an open details modal ---
 	function getModalCardId() {
@@ -79,7 +79,7 @@ javascript: (() => {
 
 	// Build the request (adminAllPages includes pages, app studio pages, and report builder pages)
 	fetch(
-		`https://${window.location.hostname}/api/content/v1/cards?urns=${cardId}&parts=adminAllPages`,
+		`${location.origin}/api/content/v1/cards?urns=${cardId}&parts=adminAllPages`,
 		{ method: 'GET' }
 	)
 		.then(async (response) => {
@@ -113,7 +113,7 @@ javascript: (() => {
 				? `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:1em;padding-left:1.5em;list-style:disc;">${card.adminAllPages
 						.map(
 							(page) =>
-								`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a></li>`
+								`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="${location.origin}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a></li>`
 						)
 						.join('')}</ul>`
 				: `<div style="color:#888;font-style:italic;margin-bottom:1em;">No pages</div>`;
@@ -122,7 +122,7 @@ javascript: (() => {
 				? `<ul class="domo-bm-list" style="margin-top:0.5em;margin-bottom:0;padding-left:1.5em;list-style:disc;">${card.adminAllAppPages
 						.map(
 							(page) =>
-								`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/app-studio/${page.appId}/pages/${page.appPageId}" target="_blank" style="text-decoration:underline;">${page.appTitle} &gt; ${page.appPageTitle}</a></li>`
+								`<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="${location.origin}/app-studio/${page.appId}/pages/${page.appPageId}" target="_blank" style="text-decoration:underline;">${page.appTitle} &gt; ${page.appPageTitle}</a></li>`
 						)
 						.join('')}</ul>`
 				: `<div style="color:#888;font-style:italic;">No app studio pages</div>`;
@@ -142,7 +142,7 @@ javascript: (() => {
 				<div style="font-family:sans-serif;">
 					<div style="display:flex;align-items:flex-start;justify-content:space-between;">
 						<strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:2.5em;">
-							<a href="https://${window.location.hostname}/kpis/details/${cardId}" target="_blank">Card ${card.title}</a> (ID: ${cardId}) is used in the following pages:
+							<a href="${location.origin}/kpis/details/${cardId}" target="_blank">Card ${card.title}</a> (ID: ${cardId}) is used in the following pages:
 						</strong>
 					</div>
 					<h4 style="margin-bottom:0.25em;">Pages</h4>
@@ -188,9 +188,9 @@ javascript: (() => {
 			modal.appendChild(modalContent);
 			document.body.appendChild(modal);
 
-			const initialUrl = window.location.href;
+			const initialUrl = location.href;
 			urlWatcher = setInterval(() => {
-				if (window.location.href !== initialUrl) cleanup();
+				if (location.href !== initialUrl) cleanup();
 			}, 500);
 			window.addEventListener('popstate', cleanup);
 			window.addEventListener('hashchange', cleanup);

@@ -1,20 +1,20 @@
 javascript: (async () => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('alerts/')) {
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
-			userId = await fetch(
-				`https://${window.location.hostname}/api/sessions/v1/me`
-			).then(async (res) => {
-				if (res.ok) {
-					const user = await res.json();
-					return user.userId || null;
+			userId = await fetch(`${location.origin}/api/sessions/v1/me`).then(
+				async (res) => {
+					if (res.ok) {
+						const user = await res.json();
+						return user.userId || null;
+					}
 				}
-			});
+			);
 		}
 
 		const newOwnerId = prompt(
@@ -33,22 +33,19 @@ javascript: (async () => {
 		const parts = url.split(/[/?=&]/);
 		const alertId = parts[parts.indexOf('alerts') + 1];
 
-		fetch(
-			`https://${window.location.hostname}/api/social/v4/alerts/${alertId}`,
-			{
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					id: alertId,
-					owner: parseInt(newOwnerId)
-				})
-			}
-		)
+		fetch(`${location.origin}/api/social/v4/alerts/${alertId}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				id: alertId,
+				owner: parseInt(newOwnerId)
+			})
+		})
 			.then((res) => {
 				if (res.ok) {
-					window.location.reload();
+					location.reload();
 				} else {
 					alert(
 						`Failed to update alert ${alertId} to owner ${newOwnerId}.\nHTTP status: ${res.status}`

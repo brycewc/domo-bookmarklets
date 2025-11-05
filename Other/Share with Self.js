@@ -1,27 +1,27 @@
 javascript: (async () => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
-	const url = window.location.href;
+	const url = location.href;
 	let userId = window.bootstrap.currentUser.USER_ID || null;
 
 	// Get user ID if not available from bootstrap
 	if (!userId) {
-		userId = await fetch(
-			`https://${window.location.hostname}/api/sessions/v1/me`
-		).then(async (res) => {
-			if (res.ok) {
-				const user = await res.json();
-				return user.userId || null;
-			} else {
-				alert(`Failed to fetch current user ID.\nHTTP status: ${res.status}`);
-				throw new Error(
-					`Failed to fetch current user ID.\nHTTP status: ${res.status}`
-				);
+		userId = await fetch(`${location.origin}/api/sessions/v1/me`).then(
+			async (res) => {
+				if (res.ok) {
+					const user = await res.json();
+					return user.userId || null;
+				} else {
+					alert(`Failed to fetch current user ID.\nHTTP status: ${res.status}`);
+					throw new Error(
+						`Failed to fetch current user ID.\nHTTP status: ${res.status}`
+					);
+				}
 			}
-		});
+		);
 	}
 
 	if (!userId) {
@@ -48,7 +48,7 @@ javascript: (async () => {
 				if (width <= 0) {
 					clearInterval(interval);
 					element.parentNode.removeChild(element);
-					window.location.reload();
+					location.reload();
 				}
 			}, 20);
 		}
@@ -67,7 +67,7 @@ javascript: (async () => {
 
 			try {
 				const datasetResponse = await fetch(
-					`https://${window.location.hostname}/api/data/v3/datasources/${datasetId}?includeAllDetails=true`,
+					`${location.origin}/api/data/v3/datasources/${datasetId}?includeAllDetails=true`,
 					{ method: 'GET' }
 				);
 
@@ -89,7 +89,7 @@ javascript: (async () => {
 
 				const accountId = dataset.accountId;
 				const shareResponse = await fetch(
-					`https://${window.location.hostname}/api/data/v2/accounts/share/${accountId}`,
+					`${location.origin}/api/data/v2/accounts/share/${accountId}`,
 					{
 						method: 'PUT',
 						headers: { 'Content-Type': 'application/json' },
@@ -123,7 +123,7 @@ javascript: (async () => {
 
 			try {
 				const response = await fetch(
-					`https://${window.location.hostname}/api/apps/v1/designs/${appDesignId}/permissions/ADMIN`,
+					`${location.origin}/api/apps/v1/designs/${appDesignId}/permissions/ADMIN`,
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
@@ -154,7 +154,7 @@ javascript: (async () => {
 
 			try {
 				const response = await fetch(
-					`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,
+					`${location.origin}/api/content/v1/share?sendEmail=false`,
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },

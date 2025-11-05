@@ -1,27 +1,27 @@
 javascript: (async () => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('workflows/')) {
 		const parts = url.split(/[/?=&]/);
 		const workflowId = parts[parts.indexOf('models') + 1];
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
-			userId = await fetch(
-				`https://${window.location.hostname}/api/sessions/v1/me`
-			).then(async (res) => {
-				if (res.ok) {
-					const user = await res.json();
-					return user.userId || null;
+			userId = await fetch(`${location.origin}/api/sessions/v1/me`).then(
+				async (res) => {
+					if (res.ok) {
+						const user = await res.json();
+						return user.userId || null;
+					}
 				}
-			});
+			);
 		}
 
 		// Start fetching workflow asynchronously
 		let workflowPromise = fetch(
-			`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`
+			`${location.origin}/api/workflow/v1/models/${workflowId}`
 		)
 			.then((res) => res.json())
 			.catch((error) => {
@@ -50,19 +50,16 @@ javascript: (async () => {
 		workflow.owner = newOwnerId.toString();
 
 		// Save workflow
-		await fetch(
-			`https://${window.location.hostname}/api/workflow/v1/models/${workflowId}`,
-			{
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(workflow)
-			}
-		)
+		await fetch(`${location.origin}/api/workflow/v1/models/${workflowId}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(workflow)
+		})
 			.then((res) => {
 				if (res.ok) {
-					window.location.reload();
+					location.reload();
 				} else {
 					alert(
 						`Failed to update workflow ${workflowId} to owner ${userId}.\nHTTP status: ${res.status}`

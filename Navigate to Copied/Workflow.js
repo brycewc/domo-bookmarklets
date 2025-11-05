@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/workflows/models/${text}`
+			href: `${location.origin}/workflows/models/${text}`
 		}).click();
 	});
 })();

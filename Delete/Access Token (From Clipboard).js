@@ -14,12 +14,9 @@ javascript: (() => {
 		if (
 			confirm(`Are you sure you want to revoke access token ${accessTokenId}?`)
 		) {
-			fetch(
-				`https://${window.location.hostname}/api/data/v1/accesstokens/${accessTokenId}`,
-				{
-					method: 'DELETE'
-				}
-			)
+			fetch(`${location.origin}/api/data/v1/accesstokens/${accessTokenId}`, {
+				method: 'DELETE'
+			})
 				.then((response) => {
 					if (response.ok) {
 						let element = document.createElement('div');

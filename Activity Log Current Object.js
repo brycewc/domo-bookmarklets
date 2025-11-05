@@ -13,7 +13,7 @@ javascript: (() => {
 
 	// Persist simple configuration per subdomain (portion before `.domo.com`) so users only enter it once
 	async function getActivityLogConfig() {
-		const host = window.location.hostname.toLowerCase();
+		const host = location.hostname.toLowerCase();
 		const rootSuffix = '.domo.com';
 		const subdomain = host.endsWith(rootSuffix)
 			? host.slice(0, -rootSuffix.length) // everything before `.domo.com`
@@ -43,7 +43,7 @@ javascript: (() => {
 			}
 			try {
 				const response = await fetch(
-					`https://${window.location.hostname}/api/content/v1/cards?urns=${cardId}&parts=datasources`,
+					`${location.origin}/api/content/v1/cards?urns=${cardId}&parts=datasources`,
 					{ method: 'GET' }
 				);
 				if (response.ok) {
@@ -91,7 +91,7 @@ javascript: (() => {
 		return cfg;
 	}
 
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
@@ -105,7 +105,7 @@ javascript: (() => {
 			}) => {
 				let objectType = [];
 				let id;
-				const url = window.location.href;
+				const url = location.href;
 				const parts = url.split(/[/?=&]/);
 				switch (true) {
 					case url.includes('alerts/'):
@@ -335,7 +335,7 @@ javascript: (() => {
 					target: '_blank',
 					rel: 'noopener noreferrer',
 					href: `https://${
-						window.location.hostname
+						location.hostname
 					}/kpis/details/${activityLogCardId}?pfilters=${encodeURIComponent(
 						JSON.stringify(pfilters)
 					)}`

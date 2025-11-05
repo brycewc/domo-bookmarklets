@@ -1,15 +1,15 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('beastmode?')) {
 		const parts = url.split(/[/?=&]/);
 		const beastModeId = parts[parts.indexOf('id') + 1];
 		if (confirm(`Are you sure you want to delete Beast Mode ${beastModeId}?`)) {
 			fetch(
-				`https://${window.location.hostname}/api/query/v1/functions/template/${beastModeId}`,
+				`${location.origin}/api/query/v1/functions/template/${beastModeId}`,
 				{
 					method: 'DELETE'
 				}

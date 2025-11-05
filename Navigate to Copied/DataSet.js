@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/datasources/${text}/details/data/table`
+			href: `${location.origin}/datasources/${text}/details/data/table`
 		}).click();
 	});
 })();

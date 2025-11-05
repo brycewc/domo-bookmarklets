@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/datacenter/beastmode?id=${text}`
+			href: `${location.origin}/datacenter/beastmode?id=${text}`
 		}).click();
 	});
 })();

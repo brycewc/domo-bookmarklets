@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/approval/edit-request-form/${text}`
+			href: `${location.origin}/approval/edit-request-form/${text}`
 		}).click();
 	});
 })();

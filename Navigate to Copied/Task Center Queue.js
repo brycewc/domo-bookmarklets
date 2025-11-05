@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/queues/tasks?queueId=${text}`
+			href: `${location.origin}/queues/tasks?queueId=${text}`
 		}).click();
 	});
 })();

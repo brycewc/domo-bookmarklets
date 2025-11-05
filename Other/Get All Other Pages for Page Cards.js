@@ -1,11 +1,11 @@
 javascript: (() => {
 	// Ensure we are on a domo domain
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('page/') || url.includes('pages/')) {
 		const parts = url.split(/[/?=&]/);
 		const pageType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
@@ -45,7 +45,7 @@ javascript: (() => {
 
 		// Create AbortController to cancel requests if user navigates away
 		const abortController = new AbortController();
-		const initialUrl = window.location.href;
+		const initialUrl = location.href;
 
 		// Helper function to remove loading indicator and cleanup
 		var removeLoading = () => {
@@ -59,7 +59,7 @@ javascript: (() => {
 
 		// Handle navigation away from page
 		const handleNavigation = () => {
-			if (window.location.href !== initialUrl) {
+			if (location.href !== initialUrl) {
 				abortController.abort();
 				removeLoading();
 			}
@@ -71,7 +71,7 @@ javascript: (() => {
 
 		// Also check for URL changes periodically (for SPA navigation)
 		var urlWatcher = setInterval(() => {
-			if (window.location.href !== initialUrl) {
+			if (location.href !== initialUrl) {
 				clearInterval(urlWatcher);
 				handleNavigation();
 			}
@@ -88,7 +88,7 @@ javascript: (() => {
 
 		// Build the request (adminAllPages includes pages, app studio pages, and report builder pages)
 		fetch(
-			`https://${window.location.hostname}/api/content/v3/stacks/${pageId}/cards?parts=adminAllPages`,
+			`${location.origin}/api/content/v3/stacks/${pageId}/cards?parts=adminAllPages`,
 			{
 				method: 'GET',
 				signal: abortController.signal
@@ -255,11 +255,11 @@ javascript: (() => {
 												)
 											)
 											.map(({ card, cardId, cardTitle }) => {
-												return `<li style="margin:0.125em 0;list-style:disc;"><a href="https://${window.location.hostname}/page/${page.pageId}/kpis/details/${cardId}" target="_blank" style="text-decoration:underline;">${cardTitle}</a></li>`;
+												return `<li style="margin:0.125em 0;list-style:disc;"><a href="${location.origin}/page/${page.pageId}/kpis/details/${cardId}" target="_blank" style="text-decoration:underline;">${cardTitle}</a></li>`;
 											})
 											.join('')}</ul></div>`
 									: '';
-								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a><button class="page-count" data-pageid="${page.pageId}" aria-expanded="false" title="Show cards on this page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="page-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="page-open-all" data-pageid="${page.pageId}" title="Open all cards on this page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
+								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="${location.origin}/page/${page.pageId}" target="_blank" style="text-decoration:underline;">${page.title}</a><button class="page-count" data-pageid="${page.pageId}" aria-expanded="false" title="Show cards on this page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="page-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="page-open-all" data-pageid="${page.pageId}" title="Open all cards on this page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
 							})
 							.join('')}</ul>`
 					: `<div style="color:#888;font-style:italic;margin-bottom:1em;">No other pages</div>`;
@@ -296,11 +296,11 @@ javascript: (() => {
 												)
 											)
 											.map(({ card, cardId, cardTitle }) => {
-												return `<li style="margin:0.125em 0;list-style:disc;"><a href="https://${window.location.hostname}/app-studio/${appPage.appId}/pages/${appPage.appPageId}/kpis/details/${cardId}" target="_blank" style="text-decoration:underline;">${cardTitle}</a></li>`;
+												return `<li style="margin:0.125em 0;list-style:disc;"><a href="${location.origin}/app-studio/${appPage.appId}/pages/${appPage.appPageId}/kpis/details/${cardId}" target="_blank" style="text-decoration:underline;">${cardTitle}</a></li>`;
 											})
 											.join('')}</ul></div>`
 									: '';
-								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="https://${window.location.hostname}/app-studio/${appPage.appId}/pages/${appPage.appPageId}" target="_blank" style="text-decoration:underline;">${appPage.appTitle} &gt; ${appPage.appPageTitle}</a><button class="apppage-count" data-appkey="${key}" aria-expanded="false" title="Show cards on this app page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="apppage-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="apppage-open-all" data-appkey="${key}" title="Open all cards on this app page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
+								return `<li style="margin-bottom:0.25em;list-style:disc;">\n<a href="${location.origin}/app-studio/${appPage.appId}/pages/${appPage.appPageId}" target="_blank" style="text-decoration:underline;">${appPage.appTitle} &gt; ${appPage.appPageTitle}</a><button class="apppage-count" data-appkey="${key}" aria-expanded="false" title="Show cards on this app page" style="color:#666;font-size:12px;margin-left:8px;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;display:inline-flex;align-items:center;gap:4px;"><svg class="apppage-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;transform:rotate(0deg);transition:transform 0.15s;"><polyline points="8 4 16 12 8 20"></polyline></svg>(${countLabel})</button><button class="apppage-open-all" data-appkey="${key}" title="Open all cards on this app page in new tabs" style="display:none;background:none;border:none;cursor:pointer;color:#666;font-size:12px;margin-left:4px;padding:2px 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>${cardsHtml}</li>`;
 							})
 							.join('')}</ul>`
 					: `<div style="color:#888;font-style:italic;">No other app studio pages</div>`;
@@ -308,8 +308,8 @@ javascript: (() => {
 				const currentPageTitle = page.page ? page.page.title : `Page ${pageId}`;
 				const currentPageUrl =
 					pageType === 'DATA_APP_VIEW'
-						? `<a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}" target="_blank">${currentPageTitle}</a>`
-						: `<a href="https://${window.location.hostname}/page/${pageId}" target="_blank">${currentPageTitle}</a>`;
+						? `<a href="${location.origin}/app-studio/${appId}/pages/${pageId}" target="_blank">${currentPageTitle}</a>`
+						: `<a href="${location.origin}/page/${pageId}" target="_blank">${currentPageTitle}</a>`;
 
 				// Build HTML for report builder pages section (plain text, no links)
 				const reportsHtml = uniqueReportPages.length
@@ -504,7 +504,7 @@ javascript: (() => {
 								(typeof card.urn === 'string' ? card.urn.split(':').pop() : '');
 							if (cardId) {
 								window.open(
-									`https://${window.location.hostname}/page/${pageId}/kpis/details/${cardId}`,
+									`${location.origin}/page/${pageId}/kpis/details/${cardId}`,
 									'_blank'
 								);
 							}
@@ -528,7 +528,7 @@ javascript: (() => {
 								(typeof card.urn === 'string' ? card.urn.split(':').pop() : '');
 							if (cardId) {
 								window.open(
-									`https://${window.location.hostname}/app-studio/${appId}/pages/${appPageId}/kpis/details/${cardId}`,
+									`${location.origin}/app-studio/${appId}/pages/${appPageId}/kpis/details/${cardId}`,
 									'_blank'
 								);
 							}
@@ -543,9 +543,9 @@ javascript: (() => {
 				// Remove loading indicator now that modal is displayed
 				removeLoading();
 
-				const initialUrl = window.location.href;
+				const initialUrl = location.href;
 				urlWatcher = setInterval(() => {
-					if (window.location.href !== initialUrl) cleanup();
+					if (location.href !== initialUrl) cleanup();
 				}, 500);
 				window.addEventListener('popstate', cleanup);
 				window.addEventListener('hashchange', cleanup);

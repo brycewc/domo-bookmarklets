@@ -1,9 +1,9 @@
 javascript: (async () => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('assetlibrary/')) {
 		const parts = url.split(/[/?=&]/);
 		const appDesignId = parts[parts.indexOf('assetlibrary') + 1];
@@ -12,12 +12,9 @@ javascript: (async () => {
 				`Are you sure you want to delete custom app design ${appDesignId}?`
 			)
 		) {
-			fetch(
-				`https://${window.location.hostname}/api/apps/v1/designs/${appDesignId}`,
-				{
-					method: 'DELETE'
-				}
-			)
+			fetch(`${location.origin}/api/apps/v1/designs/${appDesignId}`, {
+				method: 'DELETE'
+			})
 				.then((response) => {
 					if (response.ok) {
 						let element = document.createElement('div');

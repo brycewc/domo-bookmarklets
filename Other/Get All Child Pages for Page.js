@@ -1,11 +1,11 @@
 javascript: (() => {
 	// Ensure we are on a domo domain
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('page/') || url.includes('pages/')) {
 		const parts = url.split(/[/?=&]/);
 		const pageType = url.includes('app-studio') ? 'DATA_APP_VIEW' : 'PAGE';
@@ -46,7 +46,7 @@ javascript: (() => {
 
 		// Create AbortController to cancel requests if user navigates away
 		const abortController = new AbortController();
-		const initialUrl = window.location.href;
+		const initialUrl = location.href;
 
 		// Helper function to remove loading indicator and cleanup
 		var removeLoading = () => {
@@ -60,7 +60,7 @@ javascript: (() => {
 
 		// Handle navigation away from page
 		const handleNavigation = () => {
-			if (window.location.href !== initialUrl) {
+			if (location.href !== initialUrl) {
 				abortController.abort();
 				removeLoading();
 			}
@@ -72,7 +72,7 @@ javascript: (() => {
 
 		// Also check for URL changes periodically (for SPA navigation)
 		var urlWatcher = setInterval(() => {
-			if (window.location.href !== initialUrl) {
+			if (location.href !== initialUrl) {
 				clearInterval(urlWatcher);
 				handleNavigation();
 			}
@@ -100,7 +100,7 @@ javascript: (() => {
 		}
 
 		fetch(
-			`https://${window.location.hostname}/api/content/v1/pages/adminsummary?limit=100&skip=0`,
+			`${location.origin}/api/content/v1/pages/adminsummary?limit=100&skip=0`,
 			{
 				method: 'POST',
 				signal: abortController.signal,
@@ -149,8 +149,8 @@ javascript: (() => {
 				const buildPageHtml = (page) => {
 					const pageUrl =
 						pageType === 'DATA_APP_VIEW'
-							? `https://${window.location.hostname}/app-studio/${appId}/pages/${page.pageId}`
-							: `https://${window.location.hostname}/page/${page.pageId}`;
+							? `${location.origin}/app-studio/${appId}/pages/${page.pageId}`
+							: `${location.origin}/page/${page.pageId}`;
 
 					const state = pageCardsState.get(page.pageId);
 					const cardCount = page.cardCount || 0;
@@ -207,8 +207,8 @@ javascript: (() => {
 						: pages[0].parentPageTitle;
 				const currentPageLink =
 					pageType === 'DATA_APP_VIEW'
-						? `<a href="https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}" target="_blank">${currentPageTitle}</a>`
-						: `<a href="https://${window.location.hostname}/page/${pageId}" target="_blank">${currentPageTitle}</a>`;
+						? `<a href="${location.origin}/app-studio/${appId}/pages/${pageId}" target="_blank">${currentPageTitle}</a>`
+						: `<a href="${location.origin}/page/${pageId}" target="_blank">${currentPageTitle}</a>`;
 
 				const message = `
           <div style="font-family:sans-serif;">
@@ -270,8 +270,8 @@ javascript: (() => {
 						if (!id) continue;
 						window.open(
 							pageType === 'DATA_APP_VIEW'
-								? `https://${window.location.hostname}/app-studio/${appId}/pages/${id}`
-								: `https://${window.location.hostname}/page/${id}`,
+								? `${location.origin}/app-studio/${appId}/pages/${id}`
+								: `${location.origin}/page/${id}`,
 							'_blank'
 						);
 					}
@@ -282,7 +282,7 @@ javascript: (() => {
 				if (!userId) {
 					try {
 						const userResponse = await fetch(
-							`https://${window.location.hostname}/api/sessions/v1/me`
+							`${location.origin}/api/sessions/v1/me`
 						);
 						if (userResponse.ok) {
 							const user = await userResponse.json();
@@ -309,7 +309,7 @@ javascript: (() => {
 							element.parentNode.removeChild(element);
 						}
 						if (reload) {
-							window.location.reload();
+							location.reload();
 						}
 					}, duration);
 				}
@@ -340,7 +340,7 @@ javascript: (() => {
 
 					try {
 						const response = await fetch(
-							`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,
+							`${location.origin}/api/content/v1/share?sendEmail=false`,
 							{
 								method: 'POST',
 								headers: { 'Content-Type': 'application/json' },
@@ -378,7 +378,7 @@ javascript: (() => {
 					for (const page of pages) {
 						try {
 							const response = await fetch(
-								`https://${window.location.hostname}/api/content/v1/share?sendEmail=false`,
+								`${location.origin}/api/content/v1/share?sendEmail=false`,
 								{
 									method: 'POST',
 									headers: { 'Content-Type': 'application/json' },
@@ -452,8 +452,8 @@ javascript: (() => {
 								const cardTitle = card.title || card.name || `Card ${cardId}`;
 								const cardUrl =
 									pageType === 'DATA_APP_VIEW'
-										? `https://${window.location.hostname}/app-studio/${appId}/pages/${pageId}/kpis/details/${cardId}`
-										: `https://${window.location.hostname}/page/${pageId}/kpis/details/${cardId}`;
+										? `${location.origin}/app-studio/${appId}/pages/${pageId}/kpis/details/${cardId}`
+										: `${location.origin}/page/${pageId}/kpis/details/${cardId}`;
 								return `<li style="margin:0.125em 0;list-style:disc;"><a href="${cardUrl}" target="_blank" style="text-decoration:underline;">${cardTitle}</a></li>`;
 							})
 							.join('');
@@ -515,8 +515,8 @@ javascript: (() => {
 							if (cardId) {
 								const cardUrl =
 									pageType === 'DATA_APP_VIEW'
-										? `https://${window.location.hostname}/app-studio/${appId}/pages/${pageIdAttr}/kpis/details/${cardId}`
-										: `https://${window.location.hostname}/page/${pageIdAttr}/kpis/details/${cardId}`;
+										? `${location.origin}/app-studio/${appId}/pages/${pageIdAttr}/kpis/details/${cardId}`
+										: `${location.origin}/page/${pageIdAttr}/kpis/details/${cardId}`;
 								window.open(cardUrl, '_blank');
 							}
 						});
@@ -552,9 +552,9 @@ javascript: (() => {
 				// Remove loading indicator now that modal is displayed
 				removeLoading();
 
-				const initialUrl = window.location.href;
+				const initialUrl = location.href;
 				urlWatcher = setInterval(() => {
-					if (window.location.href !== initialUrl) cleanup();
+					if (location.href !== initialUrl) cleanup();
 				}, 500);
 				window.addEventListener('popstate', cleanup);
 				window.addEventListener('hashchange', cleanup);
@@ -563,7 +563,7 @@ javascript: (() => {
 				pages.forEach(async (page) => {
 					try {
 						const cardsResponse = await fetch(
-							`https://${window.location.hostname}/api/content/v1/pages/${page.pageId}/cards?parts=metadata&showAllCards=true`,
+							`${location.origin}/api/content/v1/pages/${page.pageId}/cards?parts=metadata&showAllCards=true`,
 							{
 								method: 'GET',
 								signal: abortController.signal

@@ -1,21 +1,18 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
 	navigator.clipboard.readText().then((appPageId) => {
-		fetch(
-			`https://${window.location.hostname}/api/content/v3/stacks/${appPageId}/cards`,
-			{
-				method: 'GET'
-			}
-		)
+		fetch(`${location.origin}/api/content/v3/stacks/${appPageId}/cards`, {
+			method: 'GET'
+		})
 			.then(async (response) => {
 				if (response.ok) {
 					const page = await response.json();
 					if (Array.isArray(page.cards) && page.cards.length > 0) {
 						const card = page.cards[0];
 						fetch(
-							`https://${window.location.hostname}/api/content/v1/cards?urns=${card.id}&parts=adminAllPages`,
+							`${location.origin}/api/content/v1/cards?urns=${card.id}&parts=adminAllPages`,
 							{
 								method: 'GET'
 							}
@@ -32,7 +29,7 @@ javascript: (() => {
 											Object.assign(document.createElement('a'), {
 												target: '_blank',
 												rel: 'noopener noreferrer',
-												href: `https://${window.location.hostname}/app-studio/${appId}/pages/${appPageId}`
+												href: `${location.origin}/app-studio/${appId}/pages/${appPageId}`
 											}).click();
 										} else {
 											alert(

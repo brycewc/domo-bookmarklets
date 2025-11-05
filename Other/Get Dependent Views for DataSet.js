@@ -1,15 +1,15 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('datasources/')) {
 		const parts = url.split(/[/?=&]/);
 		const datasetId = parts[parts.indexOf('datasources') + 1];
 
 		fetch(
-			`https://${window.location.hostname}/api/data/v1/lineage/DATA_SOURCE/${datasetId}?traverseUp=false&requestEntities=DATA_SOURCE`,
+			`${location.origin}/api/data/v1/lineage/DATA_SOURCE/${datasetId}?traverseUp=false&requestEntities=DATA_SOURCE`,
 			{ method: 'GET' }
 		).then(async (datasetResponse) => {
 			if (!datasetResponse.ok) {
@@ -24,7 +24,7 @@ javascript: (() => {
 			const datasetIds = datasets.map((ds) => ds.id);
 
 			fetch(
-				`https://${window.location.hostname}/api/data/v3/datasources/bulk?includePrivate=true&part=core,impactcounts&includeFormulas=false`,
+				`${location.origin}/api/data/v3/datasources/bulk?includePrivate=true&part=core,impactcounts&includeFormulas=false`,
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -82,7 +82,7 @@ javascript: (() => {
 								const dataflowCount = d?.dataFlowCount || 0;
 								const dataflowText =
 									dataflowCount === 1 ? 'dataflow' : 'dataflows';
-								return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="https://${window.location.hostname}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a> <span style="color:#666;font-size:0.9em;">(${cardCount} ${cardText}, ${dataflowCount} ${dataflowText})</span></li>`;
+								return `<li style="margin-bottom:0.25em;list-style:disc;"><a href="${location.origin}/datasources/${id}/details/overview" target="_blank" style="text-decoration:underline;">${name}</a> <span style="color:#666;font-size:0.9em;">(${cardCount} ${cardText}, ${dataflowCount} ${dataflowText})</span></li>`;
 							})
 							.join('')}</ul>`;
 					}
@@ -91,7 +91,7 @@ javascript: (() => {
               <div style="display:flex;align-items:flex-start;justify-content:space-between;">
                 <strong style="font-size:1.1em;line-height:1.3;display:block;padding-right:5em;">
                   DataSet <a href="https://${
-										window.location.hostname
+										location.hostname
 									}/datasources/${datasetId}/details/overview" target="_blank" style="text-decoration:underline;">${
 						dataset.name
 					}</a> (ID: ${datasetId})${
@@ -143,7 +143,7 @@ javascript: (() => {
 								const id = d.id || d.dataSourceId;
 								if (!id) continue;
 								window.open(
-									`https://${window.location.hostname}/datasources/${id}/details/overview`,
+									`${location.origin}/datasources/${id}/details/overview`,
 									'_blank'
 								);
 							}
@@ -166,9 +166,9 @@ javascript: (() => {
 					modal.appendChild(modalContent);
 					document.body.appendChild(modal);
 
-					const initialUrl = window.location.href;
+					const initialUrl = location.href;
 					urlWatcher = setInterval(() => {
-						if (window.location.href !== initialUrl) cleanup();
+						if (location.href !== initialUrl) cleanup();
 					}, 500);
 					window.addEventListener('popstate', cleanup);
 					window.addEventListener('hashchange', cleanup);

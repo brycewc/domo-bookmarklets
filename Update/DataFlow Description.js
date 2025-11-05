@@ -1,19 +1,16 @@
 javascript: (() => {
-	if (!window.location.hostname.includes('domo.com')) {
+	if (!location.hostname.includes('domo.com')) {
 		alert('This bookmarklet only works on *.domo.com domains.');
 		throw new Error('This bookmarklet only works on *.domo.com domains.');
 	}
-	const url = window.location.href;
+	const url = location.href;
 	if (url.includes('dataflows/')) {
 		const parts = url.split(/[/?=&]/);
 		const dataflowId = parts[parts.indexOf('dataflows') + 1];
 
-		fetch(
-			`https://${window.location.hostname}/api/dataprocessing/v2/dataflows/${dataflowId}`,
-			{
-				method: 'GET'
-			}
-		)
+		fetch(`${location.origin}/api/dataprocessing/v2/dataflows/${dataflowId}`, {
+			method: 'GET'
+		})
 			.then(async (response) => {
 				if (response.ok) {
 					const dataflow = await response.json();
@@ -35,7 +32,7 @@ javascript: (() => {
 
 					if (updatedDataflowDescription) {
 						fetch(
-							`https://${window.location.hostname}/api/dataprocessing/v1/dataflows/${dataflowId}/patch`,
+							`${location.origin}/api/dataprocessing/v1/dataflows/${dataflowId}/patch`,
 							{
 								method: 'PUT',
 								headers: {
@@ -48,7 +45,7 @@ javascript: (() => {
 						)
 							.then((res) => {
 								if (res.ok) {
-									window.location.reload();
+									location.reload();
 								} else {
 									alert(
 										`Failed to update DataFlow ${dataflowId}.\nHTTP status: ${res.status}`

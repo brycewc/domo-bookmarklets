@@ -3,7 +3,7 @@ javascript: (() => {
 		Object.assign(document.createElement('a'), {
 			target: '_blank',
 			rel: 'noopener noreferrer',
-			href: `https://${window.location.hostname}/kpis/details/${text}`
+			href: `${location.origin}/kpis/details/${text}`
 		}).click();
 	});
 })();
