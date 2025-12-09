@@ -132,7 +132,7 @@ javascript: (async () => {
 				);
 
 				if (response.ok) {
-					showSuccess(`App Design ${appDesignId} shared successfully`);
+					location.reload();
 				} else {
 					showError(
 						`Failed to share custom app design ${appDesignId}.\nHTTP status: ${response.status}`
@@ -168,7 +168,7 @@ javascript: (async () => {
 				);
 
 				if (response.ok) {
-					showSuccess(`Page ${pageId} shared successfully`);
+					location.reload();
 				} else {
 					showError(
 						`Failed to share page ${pageId}.\nHTTP status: ${response.status}`

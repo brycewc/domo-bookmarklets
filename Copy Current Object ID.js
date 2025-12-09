@@ -228,5 +228,5 @@ javascript: (() => {
 			clearInterval(interval);
 			element.parentNode.removeChild(element);
 		}
-	}, 30);
+	}, 20);
 })();
