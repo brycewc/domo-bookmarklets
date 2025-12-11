@@ -37,7 +37,7 @@ javascript: (() => {
 								clearInterval(interval);
 								element.parentNode.removeChild(element);
 							}
-						}, 30);
+						}, 20);
 					} else {
 						alert(
 							`Error revoking access token ${accessTokenId}.\nHTTP status: ${response.status}`

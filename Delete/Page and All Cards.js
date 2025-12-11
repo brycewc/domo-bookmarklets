@@ -183,11 +183,16 @@ javascript: (() => {
 
 				document.body.appendChild(element);
 
-				setTimeout(() => {
-					if (element.parentNode) {
+				let countdown = document.getElementById('countdown');
+				let width = 100;
+				let interval = setInterval(function () {
+					width--;
+					countdown.style.width = width + '%';
+					if (width <= 0) {
+						clearInterval(interval);
 						element.parentNode.removeChild(element);
 					}
-				}, duration);
+				}, 20);
 			}
 
 			function showError(message) {
@@ -201,11 +206,16 @@ javascript: (() => {
 
 				document.body.appendChild(element);
 
-				setTimeout(() => {
-					if (element.parentNode) {
+				let countdown = document.getElementById('countdown');
+				let width = 100;
+				let interval = setInterval(function () {
+					width--;
+					countdown.style.width = width + '%';
+					if (width <= 0) {
+						clearInterval(interval);
 						element.parentNode.removeChild(element);
 					}
-				}, 5000);
+				}, 20);
 			}
 
 			async function shareAllPagesWithSelf() {
