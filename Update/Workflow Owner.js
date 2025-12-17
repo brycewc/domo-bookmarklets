@@ -6,7 +6,7 @@ javascript: (async () => {
 	const url = location.href;
 	if (url.includes('workflows/')) {
 		const parts = url.split(/[/?=&]/);
-		const workflowId = parts[parts.indexOf('models') + 1];
+		const workflowId = parts[parts.indexOf('workflows') + 2];
 		let userId = window.bootstrap.currentUser.USER_ID || null;
 		if (!userId) {
 			userId = await fetch(`${location.origin}/api/sessions/v1/me`).then(

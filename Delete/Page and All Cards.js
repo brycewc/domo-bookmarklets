@@ -173,7 +173,7 @@ javascript: (() => {
 			}
 
 			// Share functions
-			function showSuccess(message, duration = 3000) {
+			function showSuccess(message, duration = 20) {
 				let element = document.createElement('div');
 				element.setAttribute(
 					'style',
@@ -192,10 +192,10 @@ javascript: (() => {
 						clearInterval(interval);
 						element.parentNode.removeChild(element);
 					}
-				}, 20);
+				}, duration);
 			}
 
-			function showError(message) {
+			function showError(message, duration = 20) {
 				let element = document.createElement('div');
 				element.setAttribute(
 					'style',
@@ -215,7 +215,7 @@ javascript: (() => {
 						clearInterval(interval);
 						element.parentNode.removeChild(element);
 					}
-				}, 20);
+				}, duration);
 			}
 
 			async function shareAllPagesWithSelf() {
@@ -329,25 +329,9 @@ javascript: (() => {
 										})
 											.then((response) => {
 												if (response.ok) {
-													let element = document.createElement('div');
-													element.setAttribute(
-														'style',
-														'position:absolute;top:0;left:50%;transform:translateX(-50%);background-color:#d4edda;color:#155724;z-index:2147483647;padding:10px;border:1px solid #c3e6cb;border-radius:5px;font-family:sans-serif;font-size:16px;box-shadow:0 0 10px rgba(0,0,0,0.1);'
+													showSuccess(
+														`Page ${pageId} and all ${page.cards.length} Cards were deleted successfully`
 													);
-													element.innerHTML = `Page ${pageId} and all ${page.cards.length} Cards were deleted successfully.<div id="countdown" style="position:absolute;bottom:0;left:0;height:5px;background-color:#155724;width:100%;"></div>`;
-
-													document.body.appendChild(element);
-
-													let countdown = document.getElementById('countdown');
-													let width = 100;
-													let interval = setInterval(function () {
-														width--;
-														countdown.style.width = width + '%';
-														if (width <= 0) {
-															clearInterval(interval);
-															element.parentNode.removeChild(element);
-														}
-													}, 30);
 												} else {
 													alert(
 														`Failed to delete page ${pageId}. All ${page.cards.length} cards were deleted successfully.\nHTTP status: ${response.status}`

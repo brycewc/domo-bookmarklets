@@ -37,8 +37,9 @@ javascript: (() => {
 							if (width <= 0) {
 								clearInterval(interval);
 								element.parentNode.removeChild(element);
+								open(`${location.origin}/appDb`, '_self');
 							}
-						}, 20);
+						}, 15);
 					} else {
 						alert(
 							`Error deleting AppDB Collection ${collectionId}.\nHTTP status: ${response.status}`
